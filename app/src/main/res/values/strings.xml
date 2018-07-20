@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Aqui vai o nome do app</string>
+    <string name="fck_label">Fck do concreto</string>
+    <string name="fck_pre_data">4,5</string>
+    <string name="espessura_label">Espessura</string>
+    <string name="espessura_metric">cm</string>
+</resources>
