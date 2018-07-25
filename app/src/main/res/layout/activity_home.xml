@@ -4,73 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home">
+    tools:context=".Home">
 
-    <TextView
-        android:id="@+id/fck_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/start_margin"
-        android:layout_marginStart="@dimen/start_margin"
-        android:layout_marginTop="@dimen/start_margin"
-        android:text="@string/fck_label"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/fck_field"
-        android:layout_width="25dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/inter_field_label_margin"
-        android:layout_marginStart="@dimen/inter_field_label_margin"
-        android:inputType="numberDecimal"
-        android:text="@string/fck_pre_data"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/fck_label"
-        app:layout_constraintLeft_toRightOf="@id/fck_label"
-        app:layout_constraintTop_toTopOf="@id/fck_label" />
-
-    <TextView
-        android:id="@+id/espessura_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/inter_fields_margin"
-        android:layout_marginStart="@dimen/inter_fields_margin"
-        android:text="@string/espessura_label"
-        app:layout_constraintBottom_toBottomOf="@id/fck_field"
-        app:layout_constraintLeft_toRightOf="@id/fck_field"
-        app:layout_constraintTop_toTopOf="@id/fck_field" />
-
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/espessura_field"
-        android:layout_width="30dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/inter_field_label_margin"
-        android:layout_marginStart="@dimen/inter_field_label_margin"
-        android:inputType="numberDecimal"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/espessura_label"
-        app:layout_constraintLeft_toRightOf="@id/espessura_label"
-        app:layout_constraintTop_toTopOf="@id/espessura_label"
-        tools:text="15,5" />
-
-    <TextView
-        android:id="@+id/espessura_metric"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/espessura_metric"
-        app:layout_constraintBottom_toBottomOf="@id/espessura_field"
-        app:layout_constraintLeft_toRightOf="@id/espessura_field"
-        app:layout_constraintTop_toTopOf="@id/espessura_field" />
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/inter_fields_margin"
-        app:layout_constraintLeft_toLeftOf="@id/fck_label"
-        app:layout_constraintTop_toBottomOf="@id/fck_label">
-
-
-    </RadioGroup>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data></data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/fck_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/start_margin"
+            android:layout_marginStart="@dimen/start_margin"
+            android:layout_marginTop="@dimen/start_margin"
+            android:text="@string/fck_label"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/fck_field"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/inter_field_label_margin"
+            android:layout_marginStart="@dimen/inter_field_label_margin"
+            android:inputType="numberDecimal"
+            android:text="@string/fck_pre_data"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/fck_label"
+            app:layout_constraintLeft_toRightOf="@id/fck_label"
+            app:layout_constraintTop_toTopOf="@id/fck_label" />
+
+        <TextView
+            android:id="@+id/espessura_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/inter_fields_margin_horizontal"
+            android:layout_marginStart="@dimen/inter_fields_margin_horizontal"
+            android:text="@string/espessura_label"
+            app:layout_constraintBottom_toBottomOf="@id/fck_field"
+            app:layout_constraintLeft_toRightOf="@id/fck_field"
+            app:layout_constraintTop_toTopOf="@id/fck_field" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/espessura_field"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/inter_field_label_margin"
+            android:layout_marginStart="@dimen/inter_field_label_margin"
+            android:inputType="number"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/espessura_label"
+            app:layout_constraintLeft_toRightOf="@id/espessura_label"
+            app:layout_constraintTop_toTopOf="@id/espessura_label"
+            tools:text="30" />
+
+        <TextView
+            android:id="@+id/espessura_metric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/espessura_metric"
+            app:layout_constraintBottom_toBottomOf="@id/espessura_field"
+            app:layout_constraintLeft_toRightOf="@id/espessura_field"
+            app:layout_constraintTop_toTopOf="@id/espessura_field" />
+
+        <TextView
+            android:id="@+id/projecao_crescimento_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/inter_fields_margin_horizontal"
+            android:text="@string/projecao_crescimento_label"
+            app:layout_constraintLeft_toLeftOf="@id/fck_label"
+            app:layout_constraintTop_toBottomOf="@id/fck_label" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/projecao_crescimento_field"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/inter_field_label_margin"
+            android:layout_marginStart="@dimen/inter_field_label_margin"
+            android:inputType="numberDecimal"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/projecao_crescimento_label"
+            app:layout_constraintLeft_toRightOf="@id/projecao_crescimento_label"
+            app:layout_constraintTop_toTopOf="@id/projecao_crescimento_label"
+            tools:text="3,5" />
+
+        <TextView
+            android:id="@+id/projecao_crescimento_metric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/projecao_crescimento_metric"
+            app:layout_constraintBottom_toBottomOf="@id/projecao_crescimento_field"
+            app:layout_constraintLeft_toRightOf="@id/projecao_crescimento_field"
+            app:layout_constraintTop_toTopOf="@id/projecao_crescimento_field" />
+
+        <TextView
+            android:id="@+id/sub_base_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/inter_fields_margin_horizontal"
+            android:text="@string/sub_base_label"
+            app:layout_constraintLeft_toLeftOf="@id/projecao_crescimento_label"
+            app:layout_constraintTop_toBottomOf="@id/projecao_crescimento_label" />
+
+        <RadioGroup
+            android:id="@+id/sub_base_radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toLeftOf="@id/sub_base_label"
+            app:layout_constraintTop_toBottomOf="@id/sub_base_label">
+
+            <RadioButton
+                android:id="@+id/granular_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/base_granular" />
+
+            <RadioButton
+                android:id="@+id/solo_cimento_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/base_solo_cimento" />
+
+            <RadioButton
+                android:id="@+id/solo_melhorado_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/base_solo_melhorado" />
+
+            <RadioButton
+                android:id="@+id/concreto_rolado_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/concreto_rolado_melhorado" />
+        </RadioGroup>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

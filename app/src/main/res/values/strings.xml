@@ -4,4 +4,11 @@
     <string name="fck_pre_data">4,5</string>
     <string name="espessura_label">Espessura</string>
     <string name="espessura_metric">cm</string>
+    <string name="projecao_crescimento_label">Projeção de crescimento</string>
+    <string name="projecao_crescimento_metric">%</string>
+    <string name="base_granular">Granular</string>
+    <string name="base_solo_cimento">Solo-cimento</string>
+    <string name="base_solo_melhorado">Solo melhorado</string>
+    <string name="concreto_rolado_melhorado">Concreto rolado</string>
+    <string name="sub_base_label">Tipo de sub-base :</string>
 </resources>
