@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data></data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="@dimen/trafego_carga_width"
+            android:layout_height="@dimen/trafego_carga_height"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/carga_por_eixo" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/trafego_carga_height"
+            android:layout_marginLeft="@dimen/inter_fields_margin_horizontal"
+            android:layout_marginStart="@dimen/inter_fields_margin_horizontal"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/repeticoes" />
+
+    </LinearLayout>
+
+</layout>

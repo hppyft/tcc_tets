@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data></data>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/eixo_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/start_margin" />
+
+            <include
+                android:id="@+id/carga_6"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_table_fields_vertical"
+                bind:text="@{@string/carga_6}" />
+
+            <include
+                android:id="@+id/carga_7"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_7}" />
+
+            <include
+                android:id="@+id/carga_8"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_8}" />
+
+            <include
+                android:id="@+id/carga_9"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_9}" />
+
+            <include
+                android:id="@+id/carga_10"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_10}" />
+
+            <include
+                android:id="@+id/carga_11"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_11}" />
+
+            <include
+                android:id="@+id/carga_12"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_12}" />
+
+            <include
+                android:id="@+id/carga_13"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_13}" />
+
+            <include
+                android:id="@+id/carga_14"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_14}" />
+
+            <include
+                android:id="@+id/carga_15"
+                layout="@layout/eixo_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                bind:text="@{@string/carga_15}" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</layout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="text"
+            type="String" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="@dimen/trafego_carga_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{text}" />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/repeticao_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/inter_fields_margin_horizontal"
+            android:layout_marginStart="@dimen/inter_fields_margin_horizontal"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:inputType="number" />
+
+    </LinearLayout>
+
+</layout>

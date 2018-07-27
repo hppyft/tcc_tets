@@ -1,4 +1,4 @@
-package com.hppyft.tcctets;
+package com.hppyft.tcctets.View;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -9,16 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hppyft.tcctets.databinding.FragDadosBinding;
+import com.hppyft.tcctets.R;
+import com.hppyft.tcctets.databinding.FragResultadosBinding;
 
-public class DadosFrag extends Fragment {
+public class ResultadosFrag extends Fragment {
 
-    FragDadosBinding mBinding;
+    private FragResultadosBinding mBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.frag_dados, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.frag_resultados, container, false);
         return mBinding.getRoot();
     }
 }
