@@ -1,8 +1,13 @@
 package com.hppyft.tcctets.Listener;
 
-import android.widget.RadioGroup;
-
 public interface SubbaseListener {
 
-    void onSubbaseSelected(RadioGroup radioGroup);
+    void onGranularSelected(boolean checked);
+
+    void onSoloCimentoSelected(boolean checked);
+
+    void onSoloMelhoradoSelected(boolean checked);
+
+    void onConcretoRoladoSelected(boolean checked);
+
 }

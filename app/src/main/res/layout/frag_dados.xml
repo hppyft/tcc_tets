@@ -66,6 +66,30 @@
                 tools:text="4.5" />
 
             <TextView
+                android:id="@+id/cbr_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/inter_fields_margin_horizontal"
+                android:layout_marginStart="@dimen/inter_fields_margin_horizontal"
+                android:text="@string/cbr_label"
+                app:layout_constraintBottom_toBottomOf="@id/fck_field"
+                app:layout_constraintLeft_toRightOf="@id/fck_field"
+                app:layout_constraintTop_toTopOf="@id/fck_field" />
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/cbr_field"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/inter_field_label_margin"
+                android:layout_marginStart="@dimen/inter_field_label_margin"
+                android:inputType="numberDecimal"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/cbr_label"
+                app:layout_constraintLeft_toRightOf="@id/cbr_label"
+                app:layout_constraintTop_toTopOf="@id/cbr_label"
+                tools:text="15.5" />
+
+            <TextView
                 android:id="@+id/projecao_crescimento_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,15 +112,6 @@
                 tools:text="3,5" />
 
             <TextView
-                android:id="@+id/projecao_crescimento_metric"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/projecao_crescimento_metric"
-                app:layout_constraintBottom_toBottomOf="@id/projecao_crescimento_field"
-                app:layout_constraintLeft_toRightOf="@id/projecao_crescimento_field"
-                app:layout_constraintTop_toTopOf="@id/projecao_crescimento_field" />
-
-            <TextView
                 android:id="@+id/sub_base_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,7 +125,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/inter_fields_margin_vertical"
-                android:onClick="@{() -> subbaseListener.onSubbaseSelected(subBaseRadioGroup)}"
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="@id/sub_base_label"
                 app:layout_constraintTop_toBottomOf="@id/sub_base_label">
@@ -119,24 +133,28 @@
                     android:id="@+id/granular_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onCheckedChanged="@{() -> subbaseListener.onGranularSelected(granularButton.isChecked())}"
                     android:text="@string/base_granular" />
 
                 <RadioButton
                     android:id="@+id/solo_cimento_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onCheckedChanged="@{() -> subbaseListener.onSoloCimentoSelected(soloCimentoButton.isChecked())}"
                     android:text="@string/base_solo_cimento" />
 
                 <RadioButton
                     android:id="@+id/solo_melhorado_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onCheckedChanged="@{() -> subbaseListener.onSoloMelhoradoSelected(soloMelhoradoButton.isChecked())}"
                     android:text="@string/base_solo_melhorado" />
 
                 <RadioButton
                     android:id="@+id/concreto_rolado_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onCheckedChanged="@{() -> subbaseListener.onConcretoRoladoSelected(concretoRoladoButton.isChecked())}"
                     android:text="@string/concreto_rolado" />
             </RadioGroup>
 
@@ -147,6 +165,7 @@
                 android:layout_marginLeft="50dp"
                 android:layout_marginStart="50dp"
                 android:text="@string/espessura_label"
+                android:visibility="@{isSubbaseSelected ? View.VISIBLE : View.GONE}"
                 app:layout_constraintLeft_toRightOf="@id/sub_base_label"
                 app:layout_constraintTop_toTopOf="@id/sub_base_label" />
 
@@ -208,6 +227,69 @@
                 app:layout_constraintLeft_toLeftOf="@id/tipo_carga_label"
                 app:layout_constraintTop_toBottomOf="@id/tipo_carga_label" />
 
+            <TextView
+                android:id="@+id/transferencia_carga_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                android:text="@string/transferencia_carga"
+                app:layout_constraintLeft_toLeftOf="@id/tipo_carga_edit_text"
+                app:layout_constraintTop_toBottomOf="@id/tipo_carga_edit_text" />
+
+            <RadioGroup
+                android:id="@+id/transferencia_carga_radio_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_field_label_margin"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="@id/transferencia_carga_label"
+                app:layout_constraintTop_toBottomOf="@id/transferencia_carga_label">
+
+                <RadioButton
+                    android:id="@+id/barras_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/barras_tranferencia_label" />
+
+                <RadioButton
+                    android:id="@+id/entrosagem_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/entrosagem_agregados_label" />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/presenca_acostamento_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_fields_margin_vertical"
+                android:text="@string/presenca_acostamento_label"
+                app:layout_constraintLeft_toLeftOf="@id/transferencia_carga_radio_group"
+                app:layout_constraintTop_toBottomOf="@id/transferencia_carga_radio_group" />
+
+            <RadioGroup
+                android:id="@+id/presenca_acostamento_radio_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/inter_field_label_margin"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="@id/presenca_acostamento_label"
+                app:layout_constraintTop_toBottomOf="@id/presenca_acostamento_label">
+
+                <RadioButton
+                    android:id="@+id/com_acostamento_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/com_acostamento_label" />
+
+                <RadioButton
+                    android:id="@+id/sem_acostamento_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sem_acostamento_label" />
+            </RadioGroup>
+
             <Button
                 android:id="@+id/calcular_button"
                 android:layout_width="wrap_content"
@@ -217,7 +299,7 @@
                 android:text="@string/calcular_button"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tipo_carga_edit_text" />
+                app:layout_constraintTop_toBottomOf="@id/presenca_acostamento_radio_group" />
 
         </android.support.constraint.ConstraintLayout>
     </FrameLayout>

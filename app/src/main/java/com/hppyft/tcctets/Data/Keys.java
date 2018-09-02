@@ -7,4 +7,7 @@ public interface Keys {
     String projecaoCrescimentoKey = "PROJECAO_CRESCIMENTO_KEY";
     String tipoSubBaseKey = "TIPO_SUB_BASE_KEY";
     String tipoCargaKey = "TIPO_CARGA_KEY";
+    String cbrKey = "CBR_KEY";
+    String tranferenciaCargakey = "TRANSFERENCIA_CARGA_KEY";
+    String acostamentoKey = "ACOSTAMENTO_KEY";
 }

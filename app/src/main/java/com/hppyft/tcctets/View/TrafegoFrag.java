@@ -29,6 +29,4 @@ public class TrafegoFrag extends Fragment {
 
         return mBinding.getRoot();
     }
-
-
 }
