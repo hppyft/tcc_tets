@@ -12,6 +12,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.hppyft.tcctets.Listener.CalculateListener;
@@ -19,6 +20,7 @@ import com.hppyft.tcctets.Data.Keys;
 import com.hppyft.tcctets.Data.StaticData;
 import com.hppyft.tcctets.Data.SubBases;
 import com.hppyft.tcctets.Listener.OpenDialogListener;
+import com.hppyft.tcctets.Listener.SubbaseListener;
 import com.hppyft.tcctets.R;
 import com.hppyft.tcctets.Util.Util;
 import com.hppyft.tcctets.databinding.FragDadosBinding;
@@ -26,7 +28,7 @@ import com.hppyft.tcctets.databinding.FragDadosBinding;
 import java.util.Objects;
 
 
-public class DadosFrag extends Fragment implements OpenDialogListener, CalculateListener {
+public class DadosFrag extends Fragment implements OpenDialogListener, CalculateListener, SubbaseListener {
 
     private FragDadosBinding mBinding;
 
@@ -40,9 +42,9 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         mBinding.fckField.setText(Float.toString(sharedPref.getFloat(Keys.fckKey, 0f)));
-        mBinding.espessuraField.setText(Integer.toString(sharedPref.getInt(Keys.espessuraKey, 0)));
         mBinding.projecaoCrescimentoField.setText(Float.toString(sharedPref.getFloat(Keys.projecaoCrescimentoKey, 0f)));
         mBinding.subBaseRadioGroup.check(sharedPref.getInt(Keys.tipoSubBaseKey, -1));
+        mBinding.espessuraRadioGroup.check(sharedPref.getInt(Keys.espessuraKey, -1));
         mBinding.setSelectedCarga(sharedPref.getInt(Keys.tipoCargaKey, -1));
 
         return mBinding.getRoot();
@@ -76,13 +78,52 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         }
     }
 
+    @Override
+    public void onSubbaseSelected(RadioGroup radioGroup) {
+        int id = radioGroup.getCheckedRadioButtonId();
+        switch (id) {
+            case R.id.granular_button:
+                mBinding.espesssuraButton1.setText("10");
+                mBinding.espesssuraButton1.setText("15");
+                mBinding.espesssuraButton1.setText("20");
+                mBinding.espesssuraButton1.setText("30");
+                mBinding.setIsSubbaseGranular(true);
+                break;
+
+            case R.id.solo_cimento_button:
+                mBinding.espesssuraButton1.setText("10");
+                mBinding.espesssuraButton1.setText("15");
+                mBinding.espesssuraButton1.setText("20");
+                mBinding.setIsSubbaseGranular(false);
+                break;
+
+            case R.id.solo_melhorado_button:
+                mBinding.espesssuraButton1.setText("10");
+                mBinding.espesssuraButton1.setText("15");
+                mBinding.espesssuraButton1.setText("20");
+                mBinding.setIsSubbaseGranular(false);
+                break;
+
+            case R.id.concreto_rolado_button:
+                mBinding.espesssuraButton1.setText("10");
+                mBinding.espesssuraButton1.setText("12.5");
+                mBinding.espesssuraButton1.setText("20");
+                mBinding.setIsSubbaseGranular(false);
+                break;
+
+            default:
+                return;
+        }
+        mBinding.setIsSubbaseSelected(true);
+    }
+
     private void saveData() {
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putFloat(Keys.fckKey, Float.parseFloat(mBinding.fckField.getText().toString()));
-        editor.putInt(Keys.espessuraKey, Integer.parseInt(mBinding.espessuraField.getText().toString()));
         editor.putFloat(Keys.projecaoCrescimentoKey, Float.parseFloat(mBinding.projecaoCrescimentoField.getText().toString()));
         editor.putInt(Keys.tipoSubBaseKey, getSubBaseId());
+        editor.putInt(Keys.espessuraKey, getEspessuraId());
         editor.putInt(Keys.tipoCargaKey, mBinding.getSelectedCarga());
         editor.apply();
     }
@@ -105,5 +146,9 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
             default:
                 return -1;
         }
+    }
+
+    private int getEspessuraId() {
+        return mBinding.espessuraRadioGroup.getCheckedRadioButtonId();
     }
 }

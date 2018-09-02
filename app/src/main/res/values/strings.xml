@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Aqui vai o nome do app</string>
-    <string name="fck_label">Fck do concreto</string>
-    <string name="espessura_label">Espessura</string>
-    <string name="espessura_metric">cm</string>
+    <string name="fct_label">Fct do concreto</string>
+    <string name="espessura_label">Espessura (cm)</string>
     <string name="projecao_crescimento_label">Projeção de crescimento</string>
     <string name="projecao_crescimento_metric">%</string>
     <string name="base_granular">Granular</string>
