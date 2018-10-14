@@ -88,8 +88,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
     private void calculateErosao() {
         double hCM = 25; //TODO 25cm o qual eh a espessura chutada
-//        double hI = hCM / 2.54; //TODO aqui eh trocado pra inches
-        double hI = 9.5;
+        double hI = hCM / 2.54; //TODO aqui eh trocado pra inches
         double kConvertido = 130; //TODO usar defineK()
         double FSC = 1.2; //TODO FSC q eh pego baseado no tipo de carga
 
@@ -105,15 +104,12 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         double PcSimplesComACComBT = 0.018 + 72.99 / L + 323.1 / Math.pow(L, 2) + 1620 / Math.pow(L, 3);
         double PcTanenComACComBT = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2) + 23848 / Math.pow(L, 3);
 
-        System.out.println("pc => " + PcSimplesSemACComBT);
-
 
         Double[] f5Simples = new Double[10];
         double carga = 6;//TODO comeca em 6 e vai ateh 15
         //TODO calcula f5 para eixo simples
         for (int i = 0; i < 10; i++) {
-//            double cargaConvertida = (carga * 10 * FSC) / 4.45;
-            double cargaConvertida = 36;
+            double cargaConvertida = (carga * 10 * FSC) / 4.45;
             f5Simples[i] = cargaConvertida / 18;
             carga++;
         }
@@ -151,18 +147,15 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         Double[] nRepeticoesTanen = new Double[18];
 
         //TODO Aqui vai variar no uso do PC, do F6, do F7 e do C2
-//        for (int i = 0; i < 10; i++) {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             deflexaoSimples[i] = PcSimplesSemACComBT * f5Simples[i] * f6ComBT * f7SemAC / kConvertido;
             pSimples[i] = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoSimples[i], 2) / hI;
-            System.out.println("P => " + pSimples[i]);
             double cXp = c1 * pSimples[i];
             if (cXp > 9) {
                 nRepeticoesSimples[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2SemAC)));
             } else {
                 nRepeticoesSimples[i] = INFINITO;
             }
-            System.out.println("nRpeticoes => " + nRepeticoesSimples[i]);
         }
 
         for (int i = 0; i < 18; i++) {
