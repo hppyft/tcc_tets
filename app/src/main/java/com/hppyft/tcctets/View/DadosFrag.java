@@ -88,33 +88,37 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
     private void calculateErosao() {
         double hCM = 25; //TODO 25cm o qual eh a espessura chutada
-        double hI = hCM / 2.54; //TODO aqui eh trocado pra inches
+//        double hI = hCM / 2.54; //TODO aqui eh trocado pra inches
+        double hI = 9.5;
         double kConvertido = 130; //TODO usar defineK()
-        double FSC = 1.1; //TODO FSC q eh pego baseado no tipo de carga
+        double FSC = 1.2; //TODO FSC q eh pego baseado no tipo de carga
 
-        double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * k)), 0.25); //TODO jah eh calculado no calculateFadiga, pode ser reaproveitado
+        double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * kConvertido)), 0.25); //TODO jah eh calculado no calculateFadiga, pode ser reaproveitado
 
         //TODO Pc tem oito valores possives, variando pra eixoSimples/Tanen + C/ ou S/ Acostamento + C/ ou S/ barras de transferencia
         double PcSimplesSemACSemBT = 1.571 + 46.127 / L + 4372.7 / Math.pow(L, 2) - 22886 / Math.pow(L, 3);
         double PcTanenSemACSemBT = 1.847 + 213.68 / L - 1260.8 / Math.pow(L, 2) + 22989 / Math.pow(L, 3);
-        double PcSimplesComACSemBT = 0.5874 + 65.78 / L + 1130.9 / Math.pow(L, 2) - 5245.8 / Math.pow(L, 3);
+        double PcSimplesComACSemBT = 0.5874 + 65.108 / L + 1130.9 / Math.pow(L, 2) - 5245.8 / Math.pow(L, 3);
         double PcTanenComACSemBT = 1.47 + 102.2 / L - 1072 / Math.pow(L, 2) + 14451 / Math.pow(L, 3);
         double PcSimplesSemACComBT = -0.3019 + 128.85 / L + 1105.8 / Math.pow(L, 2) + 3269.1 / Math.pow(L, 3);
         double PcTanenSemACComBT = 1.258 + 97.491 / L + 1484.1 / Math.pow(L, 2) - 180 / Math.pow(L, 3);
         double PcSimplesComACComBT = 0.018 + 72.99 / L + 323.1 / Math.pow(L, 2) + 1620 / Math.pow(L, 3);
         double PcTanenComACComBT = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2) + 23848 / Math.pow(L, 3);
 
+        System.out.println("pc => " + PcSimplesSemACComBT);
+
 
         Double[] f5Simples = new Double[10];
         double carga = 6;//TODO comeca em 6 e vai ateh 15
         //TODO calcula f5 para eixo simples
         for (int i = 0; i < 10; i++) {
-            double cargaConvertida = (carga * 10 * FSC) / 4.45;
+//            double cargaConvertida = (carga * 10 * FSC) / 4.45;
+            double cargaConvertida = 36;
             f5Simples[i] = cargaConvertida / 18;
             carga++;
         }
 
-        Double[] f5Tanen = new Double[10];
+        Double[] f5Tanen = new Double[18];
         carga = 13;//TODO comeca em 13 e vai ateh 30
         //TODO calcula f5 para eixo tanen
         for (int i = 0; i < 18; i++) {
@@ -136,8 +140,8 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         double c1 = 1 - Math.pow(((kConvertido / 2000) * 4 / hI), 2);
 
         //TODO calcula c2 que depende do ACOSTAMENTO
-        double c2ComAC = 0.94;
         double c2SemAC = 0.06;
+        double c2ComAC = 0.94;
 
         Double[] deflexaoSimples = new Double[10];
         Double[] deflexaoTanen = new Double[18];
@@ -147,15 +151,18 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         Double[] nRepeticoesTanen = new Double[18];
 
         //TODO Aqui vai variar no uso do PC, do F6, do F7 e do C2
-        for (int i = 0; i < 10; i++) {
+//        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             deflexaoSimples[i] = PcSimplesSemACComBT * f5Simples[i] * f6ComBT * f7SemAC / kConvertido;
             pSimples[i] = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoSimples[i], 2) / hI;
+            System.out.println("P => " + pSimples[i]);
             double cXp = c1 * pSimples[i];
             if (cXp > 9) {
                 nRepeticoesSimples[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2SemAC)));
             } else {
                 nRepeticoesSimples[i] = INFINITO;
             }
+            System.out.println("nRpeticoes => " + nRepeticoesSimples[i]);
         }
 
         for (int i = 0; i < 18; i++) {
@@ -168,6 +175,8 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
                 nRepeticoesTanen[i] = INFINITO;
             }
         }
+
+        //TODO GUARDAR AS REPETICOES
     }
 
     private void calculateFadiga() {
