@@ -1,5 +1,7 @@
 package com.hppyft.tcctets.View;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,8 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hppyft.tcctets.Data.Keys;
 import com.hppyft.tcctets.R;
+import com.hppyft.tcctets.Util.SaveTextOnSharedPrefs;
 import com.hppyft.tcctets.databinding.FragEixoTdBinding;
+
+import java.util.Objects;
 
 public class EixoTDFrag extends Fragment {
 
@@ -20,22 +26,49 @@ public class EixoTDFrag extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.frag_eixo_td, container, false);
+
+        loadData();
+        addWatchers();
+
         return mBinding.getRoot();
     }
 
-    public Integer[] getTrafegoEixoTD() throws Exception {
-        Integer[] trafegoES = new Integer[11];
-        trafegoES[0] = Integer.parseInt(mBinding.carga13.repeticaoEdit.getText().toString());
-        trafegoES[1] = Integer.parseInt(mBinding.carga14.repeticaoEdit.getText().toString());
-        trafegoES[2] = Integer.parseInt(mBinding.carga15.repeticaoEdit.getText().toString());
-        trafegoES[3] = Integer.parseInt(mBinding.carga16.repeticaoEdit.getText().toString());
-        trafegoES[4] = Integer.parseInt(mBinding.carga17.repeticaoEdit.getText().toString());
-        trafegoES[5] = Integer.parseInt(mBinding.carga18.repeticaoEdit.getText().toString());
-        trafegoES[6] = Integer.parseInt(mBinding.carga19.repeticaoEdit.getText().toString());
-        trafegoES[7] = Integer.parseInt(mBinding.carga20.repeticaoEdit.getText().toString());
-        trafegoES[8] = Integer.parseInt(mBinding.carga21.repeticaoEdit.getText().toString());
-        trafegoES[9] = Integer.parseInt(mBinding.carga22.repeticaoEdit.getText().toString());
-        trafegoES[10] = Integer.parseInt(mBinding.carga23.repeticaoEdit.getText().toString());
-        return trafegoES;
+    private void addWatchers() {
+        mBinding.carga13.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga13Key, Long.parseLong(mBinding.carga13.repeticaoEdit.getText().toString()))));
+        mBinding.carga14.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga14Key, Long.parseLong(mBinding.carga14.repeticaoEdit.getText().toString()))));
+        mBinding.carga15.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga15Key, Long.parseLong(mBinding.carga15.repeticaoEdit.getText().toString()))));
+        mBinding.carga16.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga16Key, Long.parseLong(mBinding.carga16.repeticaoEdit.getText().toString()))));
+        mBinding.carga17.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga17Key, Long.parseLong(mBinding.carga17.repeticaoEdit.getText().toString()))));
+        mBinding.carga18.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga18Key, Long.parseLong(mBinding.carga18.repeticaoEdit.getText().toString()))));
+        mBinding.carga20.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga20Key, Long.parseLong(mBinding.carga20.repeticaoEdit.getText().toString()))));
+        mBinding.carga21.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga21Key, Long.parseLong(mBinding.carga21.repeticaoEdit.getText().toString()))));
+        mBinding.carga22.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga22Key, Long.parseLong(mBinding.carga22.repeticaoEdit.getText().toString()))));
+        mBinding.carga23.repeticaoEdit.addTextChangedListener(new SaveTextOnSharedPrefs(getActivity(),
+                editor -> editor.putLong(Keys.trafegoEtdCarga23Key, Long.parseLong(mBinding.carga23.repeticaoEdit.getText().toString()))));
+    }
+
+    private void loadData() {
+        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+
+        mBinding.carga13.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga13Key, 0)));
+        mBinding.carga14.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga14Key, 0)));
+        mBinding.carga15.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga15Key, 0)));
+        mBinding.carga16.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga16Key, 0)));
+        mBinding.carga17.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga17Key, 0)));
+        mBinding.carga18.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga18Key, 0)));
+        mBinding.carga19.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga19Key, 0)));
+        mBinding.carga20.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga20Key, 0)));
+        mBinding.carga21.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga21Key, 0)));
+        mBinding.carga22.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga22Key, 0)));
+        mBinding.carga23.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEtdCarga23Key, 0)));
     }
 }

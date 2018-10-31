@@ -15,6 +15,10 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     private static final int TRAFEGO_FRAG_PAGE_NUMBER = 1;
     private static final int RESULTADOS_FRAG_PAGE_NUMBER = 2;
 
+    private DadosFrag dadosFrag;
+    private TrafegoFrag trafegoFrag;
+    private ResultadosFrag resultadosFrag;
+
     private Context mContext;
 
     public PagerAdapter(FragmentManager supportFragmentManager, Context context) {
@@ -26,11 +30,14 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case DADOS_FRAG_PAGE_NUMBER:
-                return new DadosFrag();
+                dadosFrag = new DadosFrag();
+                return dadosFrag;
             case TRAFEGO_FRAG_PAGE_NUMBER:
-                return new TrafegoFrag();
+                trafegoFrag = new TrafegoFrag();
+                return trafegoFrag;
             case RESULTADOS_FRAG_PAGE_NUMBER:
-                return new ResultadosFrag();
+                resultadosFrag = new ResultadosFrag();
+                return resultadosFrag;
             default:
                 return null;
         }
@@ -54,5 +61,17 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return NUM_PAGES;
+    }
+
+    public DadosFrag getDadosFrag() {
+        return dadosFrag;
+    }
+
+    public TrafegoFrag getTrafegoFrag() {
+        return trafegoFrag;
+    }
+
+    public ResultadosFrag getResultadosFrag() {
+        return resultadosFrag;
     }
 }

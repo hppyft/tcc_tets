@@ -10,6 +10,7 @@ import com.hppyft.tcctets.R;
 public class HomeActivity extends AppCompatActivity {
 
     private ViewPager mPager;
+    private PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +18,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         mPager = findViewById(R.id.pager);
-        PagerAdapter mPagerAdapter = new PagerAdapter(getSupportFragmentManager(), this);
+        mPagerAdapter = new PagerAdapter(getSupportFragmentManager(), this);
         mPager.setAdapter(mPagerAdapter);
         mPager.setOffscreenPageLimit(PagerAdapter.NUM_PAGES);
 

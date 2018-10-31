@@ -18,6 +18,10 @@
             type="com.hppyft.tcctets.Listener.SubbaseListener" />
 
         <variable
+            name="radioListener"
+            type="com.hppyft.tcctets.Listener.RadioListener" />
+
+        <variable
             name="selectedCarga"
             type="int" />
 
@@ -33,7 +37,7 @@
 
     </data>
 
-    <FrameLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -180,24 +184,28 @@
                 app:layout_constraintTop_toBottomOf="@id/espessura_label">
 
                 <RadioButton
-                    android:id="@+id/espesssura_button_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <RadioButton
-                    android:id="@+id/espesssura_button_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <RadioButton
-                    android:id="@+id/espesssura_button_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <RadioButton
-                    android:id="@+id/espesssura_button_4"
+                    android:id="@+id/espessura_button_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onEspessuraClicked(espessuraButton1)}" />
+
+                <RadioButton
+                    android:id="@+id/espessura_button_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onEspessuraClicked(espessuraButton2)}" />
+
+                <RadioButton
+                    android:id="@+id/espessura_button_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onEspessuraClicked(espessuraButton3)}" />
+
+                <RadioButton
+                    android:id="@+id/espessura_button_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onEspessuraClicked(espessuraButton4)}"
                     android:visibility="@{isSubbaseGranular ? View.VISIBLE : View.GONE}" />
 
             </RadioGroup>
@@ -249,12 +257,14 @@
                     android:id="@+id/barras_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onTransferenciaClicked(barrasButton)}"
                     android:text="@string/barras_tranferencia_label" />
 
                 <RadioButton
                     android:id="@+id/entrosagem_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onTransferenciaClicked(entrosagemButton)}"
                     android:text="@string/entrosagem_agregados_label" />
 
             </RadioGroup>
@@ -281,12 +291,14 @@
                     android:id="@+id/com_acostamento_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onAcostamentoClicked(comAcostamentoButton)}"
                     android:text="@string/com_acostamento_label" />
 
                 <RadioButton
                     android:id="@+id/sem_acostamento_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> radioListener.onAcostamentoClicked(semAcostamentoButton)}"
                     android:text="@string/sem_acostamento_label" />
             </RadioGroup>
 
@@ -302,5 +314,5 @@
                 app:layout_constraintTop_toBottomOf="@id/presenca_acostamento_radio_group" />
 
         </android.support.constraint.ConstraintLayout>
-    </FrameLayout>
+    </android.support.v4.widget.NestedScrollView>
 </layout>
