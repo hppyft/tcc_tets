@@ -3,6 +3,9 @@ package com.hppyft.tcctets.Data;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.app.FragmentActivity;
+
+import com.hppyft.tcctets.R;
 
 import java.util.Objects;
 
@@ -101,5 +104,131 @@ public class NonStaticData {
 
     private static Double getCrescimentoAnual(Double trafego, Double projecao) {
         return trafego * (1 + (projecao / 100));
+    }
+
+    public static Double defineK(Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+
+        float cbr = sharedPref.getFloat(Keys.cbrKey, 0f);
+        int subBase = sharedPref.getInt(Keys.tipoSubBaseKey, -1);
+        int espessura = sharedPref.getInt(Keys.espessuraKey, -1);
+        int[] column = new int[19];
+
+        switch (subBase) {
+            case R.id.granular_button:
+                subBase = SubBases.GRANULAR;
+                column = getColumnForEspessuraGranular(espessura);
+                break;
+            case R.id.solo_cimento_button:
+                subBase = SubBases.SOLO_CIMENTO;
+                column = getColumnForEspessuraSoloCimento(espessura);
+                break;
+            case R.id.solo_melhorado_button:
+                subBase = SubBases.SOLO_MELHORADO;
+                column = getColumnForEspessuraSoloMelhorado(espessura);
+                break;
+            case R.id.concreto_rolado_button:
+                subBase = SubBases.CONCRETO_ROLADO;
+                column = getColumnForEspessuraConcretoRolado(espessura);
+                break;
+            default:
+                break;
+        }
+        double k = getKFromCloumn(cbr, column);
+        return k / 0.27; //TODO divir por 0.27
+    }
+
+    private static double getKFromCloumn(float cbr, int[] column) {
+        int kAnterior = 0;
+        int cbrAnterior = 0;
+        int kPosterior = 0;
+
+        for (int i = 0; i < 19; i++) {
+            int cbrToCompare = i + 2;
+            if (cbr == cbrToCompare) {
+                return column[i];
+            } else if (cbr > cbrToCompare) {
+                kAnterior = column[i];
+                cbrAnterior = cbrToCompare;
+            } else {
+                kPosterior = column[i];
+                break;
+            }
+        }
+
+        int kDif = kPosterior - kAnterior;
+        double cbrDif = cbr - cbrAnterior;
+        return (kDif * cbrDif) + kAnterior;
+    }
+
+    private static int[] getColumnForEspessuraConcretoRolado(int espessura) {
+        switch (espessura) {
+            case R.id.espessura_button_1:
+                return StaticData.subBaseRolada10;
+            case R.id.espessura_button_2:
+                return StaticData.subBaseRolada125;
+            case R.id.espessura_button_3:
+                return StaticData.subBaseRolada20;
+            default:
+                return null;
+        }
+    }
+
+    private static int[] getColumnForEspessuraSoloCimento(int espessura) {
+        switch (espessura) {
+            case R.id.espessura_button_1:
+                return StaticData.subBaseCimento10;
+            case R.id.espessura_button_2:
+                return StaticData.subBaseCimento15;
+            case R.id.espessura_button_3:
+                return StaticData.subBaseCimento20;
+            default:
+                return null;
+        }
+    }
+
+    private static int[] getColumnForEspessuraSoloMelhorado(int espessura) {
+        switch (espessura) {
+            case R.id.espessura_button_1:
+                return StaticData.subBaseMelhorada10;
+            case R.id.espessura_button_2:
+                return StaticData.subBaseMelhorada15;
+            case R.id.espessura_button_3:
+                return StaticData.subBaseMelhorada20;
+            default:
+                return null;
+        }
+    }
+
+    private static int[] getColumnForEspessuraGranular(int espessura) {
+        switch (espessura) {
+            case R.id.espessura_button_1:
+                return StaticData.subBaseGranular10;
+            case R.id.espessura_button_2:
+                return StaticData.subBaseGranular15;
+            case R.id.espessura_button_3:
+                return StaticData.subBaseGranular20;
+            case R.id.espessura_button_4:
+                return StaticData.subBaseGranular30;
+            default:
+                return null;
+        }
+    }
+
+    public static double getFSC(Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int carga = sharedPref.getInt(Keys.tipoCargaKey, -1);
+        switch (carga) {
+            case TipoCarga.FSC10:
+                return 1.0;
+            case TipoCarga.FSC11:
+                return 1.1;
+            case TipoCarga.FSC12:
+                return 1.2;
+            case TipoCarga.FSC15:
+                return 1.5;
+            default:
+                return 0; //TODO jogar exception (lembrar de fazer em todos os lugares onde pega algo do shared prefs)
+        }
     }
 }

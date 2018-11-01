@@ -9,8 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatEditText;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +53,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
     private void addWatchers() {
         mBinding.fckField.addTextChangedListener(new SaveTextOnSharedPrefs(Objects.requireNonNull(getActivity()),
-                editor -> editor.putFloat(Keys.fckKey, Float.parseFloat(mBinding.fckField.getText().toString()))));
+                editor -> editor.putFloat(Keys.fctKey, Float.parseFloat(mBinding.fckField.getText().toString()))));
 
         mBinding.projecaoCrescimentoField.addTextChangedListener(new SaveTextOnSharedPrefs(Objects.requireNonNull(getActivity()),
                 editor -> editor.putFloat(Keys.projecaoCrescimentoKey, Float.parseFloat(mBinding.projecaoCrescimentoField.getText().toString()))));
@@ -66,7 +64,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
     private void loadData() {
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
-        mBinding.fckField.setText(Float.toString(sharedPref.getFloat(Keys.fckKey, 0f)));
+        mBinding.fckField.setText(Float.toString(sharedPref.getFloat(Keys.fctKey, 0f)));
         mBinding.projecaoCrescimentoField.setText(Float.toString(sharedPref.getFloat(Keys.projecaoCrescimentoKey, 0f)));
         mBinding.cbrField.setText(Float.toString(sharedPref.getFloat(Keys.cbrKey, 0f)));
         mBinding.transferenciaCargaRadioGroup.check(sharedPref.getInt(Keys.transferenciaCargakey, -1));
@@ -212,10 +210,8 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
     @Override
     public void calculate() {
         try {
-            defineK();
             calculateFadiga();
             calculateErosao();
-            //TODO Verificar dados das outras telas antes de calcular e mandar pra tela que faltar dado
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Alguns dos dados não foram preenchidos corretamente", Toast.LENGTH_SHORT).show();
@@ -309,27 +305,56 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
     }
 
     private void calculateFadiga() {
-        double hCM = 25; //TODO 25cm o qual eh a espessura chutada
-        double hI = hCM / 2.54; //TODO aqui eh trocado pra inches
-        double kConvertido = 130; //TODO usar defineK()
-        double FSC = 1.1; //TODO FSC q eh pego baseado no tipo de carga
-
+        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        //TODO 25cm o qual eh a espessura chutada
+        double hCM = 25;
+        //Converte a espessura para inches
+        double hI = hCM / 2.54;
+        //Pega K
+        double kConvertido = defineK();
+        //Pega o FSC
+        double fsc = NonStaticData.getFSC(Objects.requireNonNull(getActivity()));
+        //Pega o FCT
+        double fct = sharedPref.getFloat(Keys.fctKey, 0f);
+        //Converte FCT
+        double fctConvertido = fct * 145.038; //TODO Converter FCT
+        //Calcula L
         double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * kConvertido)), 0.25);
+        //Define se tem ou nao acostamento
+        boolean comAcostamento = false;
+        switch (sharedPref.getInt(Keys.acostamentoKey, -1)) {
+            case R.id.com_acostamento_button:
+                comAcostamento = true;
+                break;
+            case R.id.sem_acostamento_button:
+                comAcostamento = false;
+                break;
+            default:
+                //TODO exception
+                break;
+        }
+
+        double meSimples;
+        double meTanen;
+        double f2;
+
+        if (comAcostamento) {
+            meSimples = (-970.4 + 1202.6 * Math.log10(L) + 53.587 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
+            meTanen = (2005.4 - 1980.9 * Math.log10(L) + 99.008 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
+            f2 = 1;
+        } else {
+            meSimples = -1600 + 2525 * Math.log10(L) + 24.42 * L + 0.204 * Math.pow(L, 2);
+            meTanen = 3029 - 2966.8 * Math.log10(L) + 133.69 * L - 0.0632 * Math.pow(L, 2);
+            f2 = 0.892 + hI / 85.71 - (Math.pow(hI, 2) / 3000);
+        }
 
 
-        //TODO Se for sem acostamento
-        double meSimples = -1600 + 2525 * Math.log10(L) + 24.42 * L + 0.204 * Math.pow(L, 2);
-        double meTanen = 3029 - 2966.8 * Math.log10(L) + 133.69 * L - 0.0632 * Math.pow(L, 2);
-
-        //TODO com acostamento
-        double MeSimples2 = (-970.4 + 1202.6 * Math.log10(L) + 53.587 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
-        double MeTanen2 = (2005.4 - 1980.9 * Math.log10(L) + 99.008 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
-
-        //TODO Calcular F1 SIMPLES pra cada carga do eixo simples
+        //Calcular F1 SIMPLES pra cada carga do eixo simples
         Double[] f1Simples = new Double[10];
-        double carga = 6;//TODO comeca em 6 e vai ateh 15
+        //Comeca em 6 e vai ateh 15
+        double carga = 6;
         for (int i = 0; i < 10; i++) {
-            double cargaConvertida = (carga * 10 * FSC) / 4.45;
+            double cargaConvertida = (carga * 10 * fsc) / 4.45;
             double f1 = Math.pow((24 / cargaConvertida), 0.06) * cargaConvertida / 18;
             f1Simples[i] = f1;
             carga++;
@@ -337,38 +362,29 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
         //TODO Calcular F1 TANEN pra cada carga do eixo tanen
         Double[] f1Tanen = new Double[18];
-        carga = 13; // TODO comeca em 13 e vai ateh o 30
+        //Comeca em 13 e vai ateh o 30
+        carga = 13;
         for (int i = 0; i < 18; i++) {
-            double cargaConvertida = (carga * 10 * FSC) / 4.45;
+            double cargaConvertida = (carga * 10 * fsc) / 4.45;
             double f1 = Math.pow((48 / cargaConvertida), 0.06) * cargaConvertida / 36;
             f1Tanen[i] = f1;
             carga++;
         }
 
-        //TODO Calcular F2 s/ acostamento
-        double f2Sem = 0.892 + hI / 85.71 - (Math.pow(hI, 2) / 3000);
-
-        //TODO F2 c/ acostamento
-        double f2Com = 1;
-
         double f3 = 0.894;
-
         double f4 = 0.953;
 
         Double[] tensaoSimples = new Double[10];
         Double[] tensaoTanen = new Double[18];
         Double[] tensaoSimplesPeloFCT = new Double[10];
-        Double[] tensaoTanenPeloFCT = new Double[18];
+        Double[] tensaoTanenPeloFCT = new Double[18]; //TODO verificar se posso tirar isso daqui, perguntar pro tets se apenas as repeticoes sao comparadas
         Double[] nRepeticoesSimples = new Double[10];
         Double[] nRepeticoesTanen = new Double[18];
-
-        double fct = 4.5; //TODO Aqui pega o FCT dado como parametro
-        double fctConvertido = fct * 145.038; //TODO Converter FCT
 
         //TODO Calcular a tensao pro eixo SIMPLES, pra cada carga; ATENCAO: pode variar pois o uso do ME e o F2 sao condicionais ao acostamento
         //TODO E tambem jah calcular a tensao dividada pelo FCT
         for (int i = 0; i < 10; i++) {
-            tensaoSimples[i] = 6 * meSimples * f1Simples[i] * f2Sem * f3 * f4 / Math.pow(hI, 2);
+            tensaoSimples[i] = 6 * meSimples * f1Simples[i] * f2 * f3 * f4 / Math.pow(hI, 2);
             tensaoSimplesPeloFCT[i] = tensaoSimples[i] / fctConvertido;
             if (tensaoSimplesPeloFCT[i] > 0.55) {
                 nRepeticoesSimples[i] = Math.pow(10, (11.737 - 12.077 * tensaoSimplesPeloFCT[i]));
@@ -382,7 +398,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         //TODO Calcular a tensao pro eixo TANEN, pra cada carga; ATENCAO: pode variar pois o uso do ME e o F2 sao condicionais ao acostamento
         //TODO E tambem jah calcular a tensao dividada pelo FCT
         for (int i = 0; i < 18; i++) {
-            tensaoTanen[i] = 6 * meTanen * f1Tanen[i] * f2Sem * f3 * f4 / Math.pow(hI, 2);
+            tensaoTanen[i] = 6 * meTanen * f1Tanen[i] * f2 * f3 * f4 / Math.pow(hI, 2);
             tensaoTanenPeloFCT[i] = tensaoTanen[i] / fctConvertido;
             if (tensaoTanenPeloFCT[i] > 0.55) {
                 nRepeticoesTanen[i] = Math.pow(10, (11.737 - 12.077 * tensaoTanenPeloFCT[i]));
@@ -396,16 +412,8 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         //TODO guardar os valores de nRepeticoes calculadas
     }
 
-    private void defineK() {
-//        mBinding.cbrField.getText(),toString(); //TODO aqui pegar CBR do campo
-//        mBinding.subBaseRadioGroup //TODO pegar subbase
-//        mBinding.espessuraRadioGroup //TODO pegar espessura da subbase
-
-//        StaticData.subBaseGranular10[0] //TODO baseado nos dados anteriores, pergar o K
-
-        double k = 0; //TODO pegar da tabela /\
-
-        double kConvertido = k / 0.27;//TODO divir por 0.27
+    private double defineK() {
+        return NonStaticData.defineK(Objects.requireNonNull(getActivity()));
     }
 
     private Double[] calculateSomatorioTrafegoES() {

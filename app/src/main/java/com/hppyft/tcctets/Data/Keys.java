@@ -2,7 +2,7 @@ package com.hppyft.tcctets.Data;
 
 public interface Keys {
 
-    String fckKey = "FCK_KEY";
+    String fctKey = "FCK_KEY";
     String espessuraKey = "ESPESSURA_KEY";
     String projecaoCrescimentoKey = "PROJECAO_CRESCIMENTO_KEY";
     String tipoSubBaseKey = "TIPO_SUB_BASE_KEY";
