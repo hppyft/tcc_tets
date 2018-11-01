@@ -59,7 +59,7 @@ public class EixoSimplesFrag extends Fragment {
     private void loadData() {
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
 
-        mBinding.carga6.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga6Key, 0)));
+        mBinding.carga6.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga6Key, 0))); //TODO Mudar isso aqui tudo fazendo parse de int pra long
         mBinding.carga7.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga7Key, 0)));
         mBinding.carga8.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga8Key, 0)));
         mBinding.carga9.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga9Key, 0)));
