@@ -8,7 +8,7 @@ public interface Keys {
     String tipoSubBaseKey = "TIPO_SUB_BASE_KEY";
     String tipoCargaKey = "TIPO_CARGA_KEY";
     String cbrKey = "CBR_KEY";
-    String transferenciaCargakey = "TRANSFERENCIA_CARGA_KEY";
+    String barrasTransferenciaKey = "BARRAS_TRANSFERENCIA_KEY";
     String acostamentoKey = "ACOSTAMENTO_KEY";
 
     //TrafegoES

@@ -27,10 +27,24 @@ public class EixoSimplesFrag extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.frag_eixo_simples, container, false);
 
+        cleanWatchers();
         loadData();
         addWatchers();
 
         return mBinding.getRoot();
+    }
+
+    private void cleanWatchers() {
+//        mBinding.carga6.repeticaoEdit.removeTextChangedListener();
+//        mBinding.carga7.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga8.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga9.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga10.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga11.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga12.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga13.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga14.repeticaoEdit.removeTextChangedListener(null);
+//        mBinding.carga15.repeticaoEdit.removeTextChangedListener(null);
     }
 
     private void addWatchers() {
@@ -59,7 +73,7 @@ public class EixoSimplesFrag extends Fragment {
     private void loadData() {
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
 
-        mBinding.carga6.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga6Key, 0))); //TODO Mudar isso aqui tudo fazendo parse de int pra long
+        mBinding.carga6.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga6Key, 0)));
         mBinding.carga7.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga7Key, 0)));
         mBinding.carga8.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga8Key, 0)));
         mBinding.carga9.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga9Key, 0)));

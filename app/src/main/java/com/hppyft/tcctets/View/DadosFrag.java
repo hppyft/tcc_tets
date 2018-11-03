@@ -67,7 +67,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         mBinding.fckField.setText(Float.toString(sharedPref.getFloat(Keys.fctKey, 0f)));
         mBinding.projecaoCrescimentoField.setText(Float.toString(sharedPref.getFloat(Keys.projecaoCrescimentoKey, 0f)));
         mBinding.cbrField.setText(Float.toString(sharedPref.getFloat(Keys.cbrKey, 0f)));
-        mBinding.transferenciaCargaRadioGroup.check(sharedPref.getInt(Keys.transferenciaCargakey, -1));
+        mBinding.transferenciaCargaRadioGroup.check(sharedPref.getInt(Keys.barrasTransferenciaKey, -1));
         mBinding.presencaAcostamentoRadioGroup.check(sharedPref.getInt(Keys.acostamentoKey, -1));
 
         int carga = sharedPref.getInt(Keys.tipoCargaKey, -1);
@@ -182,7 +182,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
     public void onTransferenciaClicked(RadioButton radioButton) {
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(Keys.transferenciaCargakey, radioButton.getId());
+        editor.putInt(Keys.barrasTransferenciaKey, radioButton.getId());
         editor.commit();
     }
 
@@ -212,96 +212,128 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         try {
             calculateFadiga();
             calculateErosao();
+            calculatePorcentagemTotal();
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "Alguns dos dados não foram preenchidos corretamente", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Um ou mais dados não foram preenchidos corretamente", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void calculatePorcentagemTotal() {
+        NonStaticData.calculatePorcentagemTotal(Objects.requireNonNull(getActivity()));
+    }
+
     private void calculateErosao() {
-        double hCM = 25; //TODO 25cm o qual eh a espessura chutada
-        double hI = hCM / 2.54; //TODO aqui eh trocado pra inches
-        double kConvertido = 130; //TODO usar defineK()
-        double FSC = 1.2; //TODO FSC q eh pego baseado no tipo de carga
+        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        //TODO 25cm o qual eh a espessura chutada
+        double hCM = 25;
+        //Conversao para inches
+        double hI = hCM / 2.54;
+        double kConvertido = defineK();
+        double fsc = NonStaticData.getFSC(Objects.requireNonNull(getActivity()));
+        double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * kConvertido)), 0.25);
 
-        double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * kConvertido)), 0.25); //TODO jah eh calculado no calculateFadiga, pode ser reaproveitado
+        boolean comAcostamento = false;
+        switch (sharedPref.getInt(Keys.acostamentoKey, -1)) {
+            case R.id.com_acostamento_button:
+                comAcostamento = true;
+                break;
+            case R.id.sem_acostamento_button:
+                comAcostamento = false;
+                break;
+            default:
+                //TODO exception
+                break;
+        }
 
-        //TODO Pc tem oito valores possives, variando pra eixoSimples/Tanen + C/ ou S/ Acostamento + C/ ou S/ barras de transferencia
-        double PcSimplesSemACSemBT = 1.571 + 46.127 / L + 4372.7 / Math.pow(L, 2) - 22886 / Math.pow(L, 3);
-        double PcTanenSemACSemBT = 1.847 + 213.68 / L - 1260.8 / Math.pow(L, 2) + 22989 / Math.pow(L, 3);
-        double PcSimplesComACSemBT = 0.5874 + 65.108 / L + 1130.9 / Math.pow(L, 2) - 5245.8 / Math.pow(L, 3);
-        double PcTanenComACSemBT = 1.47 + 102.2 / L - 1072 / Math.pow(L, 2) + 14451 / Math.pow(L, 3);
-        double PcSimplesSemACComBT = -0.3019 + 128.85 / L + 1105.8 / Math.pow(L, 2) + 3269.1 / Math.pow(L, 3);
-        double PcTanenSemACComBT = 1.258 + 97.491 / L + 1484.1 / Math.pow(L, 2) - 180 / Math.pow(L, 3);
-        double PcSimplesComACComBT = 0.018 + 72.99 / L + 323.1 / Math.pow(L, 2) + 1620 / Math.pow(L, 3);
-        double PcTanenComACComBT = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2) + 23848 / Math.pow(L, 3);
+        boolean comBarras = false;
+        switch (sharedPref.getInt(Keys.barrasTransferenciaKey, -1)) {
+            case R.id.barras_button:
+                comBarras = true;
+                break;
+            case R.id.entrosagem_button:
+                comBarras = false;
+                break;
+            default:
+                //TODO exception
+                break;
+        }
 
+        double pcSimples = 0;
+        double pcTanen = 0;
+        double f6 = 0;
+        double f7 = 0;
+        double c2 = 0;
+        if (comAcostamento && comBarras) {
+            f6 = 1;
+            f7 = 1;
+            c2 = 0.94;
+            pcSimples = 0.018 + 72.99 / L + 323.1 / Math.pow(L, 2) + 1620 / Math.pow(L, 3);
+            pcTanen = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2) + 23848 / Math.pow(L, 3);
+        } else if (comAcostamento) {
+            f6 = 1.001 - Math.pow((0.26363 - kConvertido / 3034.5), 2);
+            f7 = 1;
+            c2 = 0.94;
+            pcSimples = 0.5874 + 65.108 / L + 1130.9 / Math.pow(L, 2) - 5245.8 / Math.pow(L, 3);
+            pcTanen = 1.47 + 102.2 / L - 1072 / Math.pow(L, 2) + 14451 / Math.pow(L, 3);
+        } else if (comBarras) {
+            f7 = 0.896;
+            f6 = 1;
+            c2 = 0.06;
+            pcSimples = -0.3019 + 128.85 / L + 1105.8 / Math.pow(L, 2) + 3269.1 / Math.pow(L, 3);
+            pcTanen = 1.258 + 97.491 / L + 1484.1 / Math.pow(L, 2) - 180 / Math.pow(L, 3);
+        } else {
+            f7 = 0.896;
+            f6 = 0.95;
+            c2 = 0.06;
+            pcSimples = 1.571 + 46.127 / L + 4372.7 / Math.pow(L, 2) - 22886 / Math.pow(L, 3);
+            pcTanen = 1.847 + 213.68 / L - 1260.8 / Math.pow(L, 2) + 22989 / Math.pow(L, 3);
+        }
 
         Double[] f5Simples = new Double[10];
-        double carga = 6;//TODO comeca em 6 e vai ateh 15
-        //TODO calcula f5 para eixo simples
-        for (int i = 0; i < 10; i++) {
-            double cargaConvertida = (carga * 10 * FSC) / 4.45;
+        //Comeca em 6 e vai ateh 15
+        for (int i = 0, carga = 6; i < 10; i++, carga++) {
+            double cargaConvertida = (carga * 10 * fsc) / 4.45;
             f5Simples[i] = cargaConvertida / 18;
-            carga++;
         }
 
         Double[] f5Tanen = new Double[18];
-        carga = 13;//TODO comeca em 13 e vai ateh 30
-        //TODO calcula f5 para eixo tanen
-        for (int i = 0; i < 18; i++) {
-            double cargaConvertida = (carga * 10 * FSC) / 4.45;
+        //Comeca em 13 e vai ateh 30
+        for (int i = 0, carga = 13; i < 18; i++, carga++) {
+            double cargaConvertida = (carga * 10 * fsc) / 4.45;
             f5Tanen[i] = cargaConvertida / 36;
-            carga++;
         }
 
-        //TODO calcula f6 que depende do acostamento + barra de transferencia, porem soh tem 3 opcoes
-        double f6SemACSemBT = 0.95;
-        double f6ComACSemBT = 1.001 - Math.pow((0.26363 - kConvertido / 3034.5), 2);
-        double f6ComBT = 1;
-
-        //TODO calcula f7 que depende do acostamento
-        double f7SemAC = 0.896;
-        double f7ComAC = 1;
-
-        //TODO calcula c1
         double c1 = 1 - Math.pow(((kConvertido / 2000) * 4 / hI), 2);
 
-        //TODO calcula c2 que depende do ACOSTAMENTO
-        double c2SemAC = 0.06;
-        double c2ComAC = 0.94;
-
-        Double[] deflexaoSimples = new Double[10];
-        Double[] deflexaoTanen = new Double[18];
-        Double[] pSimples = new Double[10];
-        Double[] pTanen = new Double[18];
         Double[] nRepeticoesSimples = new Double[10];
         Double[] nRepeticoesTanen = new Double[18];
 
-        //TODO Aqui vai variar no uso do PC, do F6, do F7 e do C2
-        for (int i = 0; i < 10; i++) {
-            deflexaoSimples[i] = PcSimplesSemACComBT * f5Simples[i] * f6ComBT * f7SemAC / kConvertido;
-            pSimples[i] = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoSimples[i], 2) / hI;
-            double cXp = c1 * pSimples[i];
+        for (int i = 0; i < nRepeticoesSimples.length; i++) {
+            double deflexaoSimples = pcSimples * f5Simples[i] * f6 * f7 / kConvertido;
+            double pSimples = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoSimples, 2) / hI;
+            double cXp = c1 * pSimples;
             if (cXp > 9) {
-                nRepeticoesSimples[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2SemAC)));
+                nRepeticoesSimples[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2)));
             } else {
                 nRepeticoesSimples[i] = INFINITO;
             }
         }
 
-        for (int i = 0; i < 18; i++) {
-            deflexaoTanen[i] = PcTanenSemACComBT * f5Tanen[i] * f6ComBT * f7SemAC / kConvertido;
-            pTanen[i] = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoTanen[i], 2) / hI;
-            double cXp = c1 * pTanen[i];
+        NonStaticData.setmErosaoRepeticoesSimples(nRepeticoesSimples);
+
+        for (int i = 0; i < nRepeticoesTanen.length; i++) {
+            double deflexaoTanen = pcTanen * f5Tanen[i] * f6 * f7 / kConvertido;
+            double pTanen = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoTanen, 2) / hI;
+            double cXp = c1 * pTanen;
             if (cXp > 9) {
-                nRepeticoesTanen[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2SemAC)));
+                nRepeticoesTanen[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2)));
             } else {
                 nRepeticoesTanen[i] = INFINITO;
             }
         }
 
-        //TODO GUARDAR AS REPETICOES
+        NonStaticData.setmErosaoRepeticoesTanen(nRepeticoesTanen);
     }
 
     private void calculateFadiga() {
@@ -317,7 +349,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         //Pega o FCT
         double fct = sharedPref.getFloat(Keys.fctKey, 0f);
         //Converte FCT
-        double fctConvertido = fct * 145.038; //TODO Converter FCT
+        double fctConvertido = fct * 145.038;
         //Calcula L
         double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * kConvertido)), 0.25);
         //Define se tem ou nao acostamento
@@ -360,7 +392,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
             carga++;
         }
 
-        //TODO Calcular F1 TANEN pra cada carga do eixo tanen
+        //Calcula F1 TANEN pra cada carga do eixo tanen
         Double[] f1Tanen = new Double[18];
         //Comeca em 13 e vai ateh o 30
         carga = 13;
@@ -374,60 +406,41 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         double f3 = 0.894;
         double f4 = 0.953;
 
-        Double[] tensaoSimples = new Double[10];
-        Double[] tensaoTanen = new Double[18];
-        Double[] tensaoSimplesPeloFCT = new Double[10];
-        Double[] tensaoTanenPeloFCT = new Double[18]; //TODO verificar se posso tirar isso daqui, perguntar pro tets se apenas as repeticoes sao comparadas
         Double[] nRepeticoesSimples = new Double[10];
         Double[] nRepeticoesTanen = new Double[18];
 
-        //TODO Calcular a tensao pro eixo SIMPLES, pra cada carga; ATENCAO: pode variar pois o uso do ME e o F2 sao condicionais ao acostamento
-        //TODO E tambem jah calcular a tensao dividada pelo FCT
-        for (int i = 0; i < 10; i++) {
-            tensaoSimples[i] = 6 * meSimples * f1Simples[i] * f2 * f3 * f4 / Math.pow(hI, 2);
-            tensaoSimplesPeloFCT[i] = tensaoSimples[i] / fctConvertido;
-            if (tensaoSimplesPeloFCT[i] > 0.55) {
-                nRepeticoesSimples[i] = Math.pow(10, (11.737 - 12.077 * tensaoSimplesPeloFCT[i]));
-            } else if (tensaoSimplesPeloFCT[i] > 0.45 && tensaoSimplesPeloFCT[i] < 0.55) {
-                nRepeticoesSimples[i] = Math.pow((4.2577 / (tensaoSimplesPeloFCT[i] - 0.4325)), 3.268);
+        //Calcula o numero de repeticoes suportadas pra cada carga
+        for (int i = 0; i < nRepeticoesSimples.length; i++) {
+            double tensaoSimples = 6 * meSimples * f1Simples[i] * f2 * f3 * f4 / Math.pow(hI, 2);
+            double tensaoSimplesPeloFCT = tensaoSimples / fctConvertido;
+            if (tensaoSimplesPeloFCT > 0.55) {
+                nRepeticoesSimples[i] = Math.pow(10, (11.737 - 12.077 * tensaoSimplesPeloFCT));
+            } else if (tensaoSimplesPeloFCT > 0.45 && tensaoSimplesPeloFCT < 0.55) {
+                nRepeticoesSimples[i] = Math.pow((4.2577 / (tensaoSimplesPeloFCT - 0.4325)), 3.268);
             } else {
                 nRepeticoesSimples[i] = INFINITO;
             }
         }
 
-        //TODO Calcular a tensao pro eixo TANEN, pra cada carga; ATENCAO: pode variar pois o uso do ME e o F2 sao condicionais ao acostamento
-        //TODO E tambem jah calcular a tensao dividada pelo FCT
-        for (int i = 0; i < 18; i++) {
-            tensaoTanen[i] = 6 * meTanen * f1Tanen[i] * f2 * f3 * f4 / Math.pow(hI, 2);
-            tensaoTanenPeloFCT[i] = tensaoTanen[i] / fctConvertido;
-            if (tensaoTanenPeloFCT[i] > 0.55) {
-                nRepeticoesTanen[i] = Math.pow(10, (11.737 - 12.077 * tensaoTanenPeloFCT[i]));
-            } else if (tensaoTanenPeloFCT[i] > 0.45 && tensaoTanenPeloFCT[i] < 0.55) {
-                nRepeticoesTanen[i] = Math.pow((4.2577 / (tensaoTanenPeloFCT[i] - 0.4325)), 3.268);
+        NonStaticData.setmFadigaRepeticoesSimples(nRepeticoesSimples);
+
+        //Calcula o numero de repeticoes suportadas pra cada carga
+        for (int i = 0; i < nRepeticoesTanen.length; i++) {
+            double tensaoTanen = 6 * meTanen * f1Tanen[i] * f2 * f3 * f4 / Math.pow(hI, 2);
+            double tensaoTanenPeloFCT = tensaoTanen / fctConvertido;
+            if (tensaoTanenPeloFCT > 0.55) {
+                nRepeticoesTanen[i] = Math.pow(10, (11.737 - 12.077 * tensaoTanenPeloFCT));
+            } else if (tensaoTanenPeloFCT > 0.45 && tensaoTanenPeloFCT < 0.55) {
+                nRepeticoesTanen[i] = Math.pow((4.2577 / (tensaoTanenPeloFCT - 0.4325)), 3.268);
             } else {
                 nRepeticoesTanen[i] = INFINITO;
             }
         }
 
-        //TODO guardar os valores de nRepeticoes calculadas
+        NonStaticData.setmFadigaRepeticoesTanen(nRepeticoesTanen);
     }
 
     private double defineK() {
         return NonStaticData.defineK(Objects.requireNonNull(getActivity()));
-    }
-
-    private Double[] calculateSomatorioTrafegoES() {
-        Double projecaoCrescimento = Double.parseDouble(mBinding.projecaoCrescimentoField.getText().toString());
-        return NonStaticData.calculateSomatorioTrafegoES(Objects.requireNonNull(getActivity()), projecaoCrescimento);
-    }
-
-    private Double[] calculateSomatorioTrafegoETD() {
-        Double projecaoCrescimento = Double.parseDouble(mBinding.projecaoCrescimentoField.getText().toString());
-        return NonStaticData.calculateSomatorioTrafegoETD(Objects.requireNonNull(getActivity()), projecaoCrescimento);
-    }
-
-    private Double[] calculateSomatorioTrafegoETT() {
-        Double projecaoCrescimento = Double.parseDouble(mBinding.projecaoCrescimentoField.getText().toString());
-        return NonStaticData.calculateSomatorioTrafegoETT(Objects.requireNonNull(getActivity()), projecaoCrescimento);
     }
 }

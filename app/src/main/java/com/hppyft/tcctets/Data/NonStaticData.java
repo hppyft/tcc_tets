@@ -3,15 +3,36 @@ package com.hppyft.tcctets.Data;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.app.FragmentActivity;
 
 import com.hppyft.tcctets.R;
+import com.hppyft.tcctets.View.DadosFrag;
 
 import java.util.Objects;
 
 public class NonStaticData {
 
-    public static Long[] getTrafegoEixoSimples(Activity activity) {
+    private static Double[] mFadigaRepeticoesSimples;
+    private static Double[] mFadigaRepeticoesTanen;
+    private static Double[] mErosaoRepeticoesSimples;
+    private static Double[] mErosaoRepeticoesTanen;
+
+    public static void setmFadigaRepeticoesSimples(Double[] mFadigaRepeticoesSimples) {
+        NonStaticData.mFadigaRepeticoesSimples = mFadigaRepeticoesSimples;
+    }
+
+    public static void setmFadigaRepeticoesTanen(Double[] mFadigaRepeticoesTanen) {
+        NonStaticData.mFadigaRepeticoesTanen = mFadigaRepeticoesTanen;
+    }
+
+    public static void setmErosaoRepeticoesSimples(Double[] mErosaoRepeticoesSimples) {
+        NonStaticData.mErosaoRepeticoesSimples = mErosaoRepeticoesSimples;
+    }
+
+    public static void setmErosaoRepeticoesTanen(Double[] mErosaoRepeticoesTanen) {
+        NonStaticData.mErosaoRepeticoesTanen = mErosaoRepeticoesTanen;
+    }
+
+    private static Long[] getTrafegoEixoSimples(Activity activity) {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         Long[] trafegoES = new Long[10];
         trafegoES[0] = sharedPref.getLong(Keys.trafegoEsCarga6Key, 0);
@@ -27,7 +48,7 @@ public class NonStaticData {
         return trafegoES;
     }
 
-    public static Long[] getTrafegoEixoTD(Activity activity) {
+    private static Long[] getTrafegoEixoTD(Activity activity) {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         Long[] trafegoETD = new Long[11];
         trafegoETD[0] = sharedPref.getLong(Keys.trafegoEtdCarga13Key, 0);
@@ -44,7 +65,7 @@ public class NonStaticData {
         return trafegoETD;
     }
 
-    public static Long[] getTrafegoEixoTT(Activity activity) {
+    private static Long[] getTrafegoEixoTT(Activity activity) {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         Long[] trafegoETT = new Long[9];
         trafegoETT[0] = sharedPref.getLong(Keys.trafegoEttCarga22Key, 0);
@@ -59,7 +80,7 @@ public class NonStaticData {
         return trafegoETT;
     }
 
-    public static Double[] calculateSomatorioTrafegoES(Activity activity, Double projecaoCrescimento) {
+    private static Double[] calculateSomatorioTrafegoES(Activity activity, Double projecaoCrescimento) {
         Long[] trafegoSimples = NonStaticData.getTrafegoEixoSimples(Objects.requireNonNull(activity));
         Double[] somatorioSimples = new Double[10];
         for (int a = 0; a < 10; a++) {
@@ -73,10 +94,27 @@ public class NonStaticData {
         return somatorioSimples;
     }
 
-    public static Double[] calculateSomatorioTrafegoETD(Activity activity, Double projecaoCrescimento) {
+    private static Double[] calculateSomatorioTrafegoETanen(Activity activity, Double projecaoCrescimento) {
+        Double[] somatorioTD = calculateSomatorioTrafegoETD(activity, projecaoCrescimento);
+        Double[] somatorioTT = calculateSomatorioTrafegoETT(activity, projecaoCrescimento);
+        Double[] somatorioTanen = new Double[18];
+
+        for (int i = 0; i < somatorioTanen.length; i++) {
+            if (i < 9) {
+                somatorioTanen[i] = somatorioTD[i];
+            } else if (i < 11) {
+                somatorioTanen[i] = somatorioTD[i] + somatorioTT[i - 9];
+            } else {
+                somatorioTanen[i] = somatorioTT[i - 9];
+            }
+        }
+        return somatorioTanen;
+    }
+
+    private static Double[] calculateSomatorioTrafegoETD(Activity activity, Double projecaoCrescimento) {
         Long[] trafegoDuplo = NonStaticData.getTrafegoEixoTD(Objects.requireNonNull(activity));
         Double[] somatorioDuplo = new Double[11];
-        for (int a = 0; a < 11; a++) {
+        for (int a = 0; a < somatorioDuplo.length; a++) {
             somatorioDuplo[a] = Double.valueOf(trafegoDuplo[a]);
             Double resultadoIteracao = somatorioDuplo[a];
             for (int b = 1; b <= 19; b++) {
@@ -87,11 +125,11 @@ public class NonStaticData {
         return somatorioDuplo;
     }
 
-    public static Double[] calculateSomatorioTrafegoETT(Activity activity, Double projecaoCrescimento) {
+    private static Double[] calculateSomatorioTrafegoETT(Activity activity, Double projecaoCrescimento) {
         Long[] trafegoTriplo = NonStaticData.getTrafegoEixoTT(Objects.requireNonNull(activity));
         Double[] somatorioTriplo = new Double[9];
 
-        for (int a = 0; a < 9; a++) {
+        for (int a = 0; a < somatorioTriplo.length; a++) {
             somatorioTriplo[a] = Double.valueOf(trafegoTriplo[a]);
             Double resultadoIteracao = somatorioTriplo[a];
             for (int b = 1; b <= 19; b++) {
@@ -116,26 +154,23 @@ public class NonStaticData {
 
         switch (subBase) {
             case R.id.granular_button:
-                subBase = SubBases.GRANULAR;
                 column = getColumnForEspessuraGranular(espessura);
                 break;
             case R.id.solo_cimento_button:
-                subBase = SubBases.SOLO_CIMENTO;
                 column = getColumnForEspessuraSoloCimento(espessura);
                 break;
             case R.id.solo_melhorado_button:
-                subBase = SubBases.SOLO_MELHORADO;
                 column = getColumnForEspessuraSoloMelhorado(espessura);
                 break;
             case R.id.concreto_rolado_button:
-                subBase = SubBases.CONCRETO_ROLADO;
                 column = getColumnForEspessuraConcretoRolado(espessura);
                 break;
             default:
                 break;
         }
         double k = getKFromCloumn(cbr, column);
-        return k / 0.27; //TODO divir por 0.27
+        //Conversao de k
+        return k / 0.27;
     }
 
     private static double getKFromCloumn(float cbr, int[] column) {
@@ -230,5 +265,52 @@ public class NonStaticData {
             default:
                 return 0; //TODO jogar exception (lembrar de fazer em todos os lugares onde pega algo do shared prefs)
         }
+    }
+
+    public static void calculatePorcentagemTotal(Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        double proj = sharedPref.getFloat(Keys.projecaoCrescimentoKey, 0);
+
+        Double[] somatTrafES = calculateSomatorioTrafegoES(activity, proj);
+        Double[] somatTrafET = calculateSomatorioTrafegoETanen(activity, proj);
+
+        Double[] porcentErosaoES = new Double[somatTrafES.length];
+        Double[] porcentErosaoET = new Double[somatTrafET.length];
+        Double[] porcentFadigaES = new Double[somatTrafES.length];
+        Double[] porcentFadigaET = new Double[somatTrafET.length];
+
+        Double ErosaoTotal = 0d;
+        Double FadigaTotal = 0d;
+
+        for (int i = 0; i < somatTrafES.length; i++) {
+            if (!mErosaoRepeticoesSimples[i].equals(DadosFrag.INFINITO)) {
+                porcentErosaoES[i] = mErosaoRepeticoesSimples[i] * 100 / somatTrafES[i];
+            } else {
+                porcentErosaoES[i] = 0d;
+            }
+            if (!mFadigaRepeticoesSimples[i].equals(DadosFrag.INFINITO)) {
+                porcentFadigaES[i] = mFadigaRepeticoesSimples[i] * 100 / somatTrafES[i];
+            } else {
+                porcentFadigaES[i] = 0d;
+            }
+            ErosaoTotal += porcentErosaoES[i];
+            FadigaTotal += porcentFadigaES[i];
+        }
+        for (int i = 0; i < somatTrafET.length; i++) {
+            if (!mErosaoRepeticoesTanen[i].equals(DadosFrag.INFINITO)) {
+                porcentErosaoET[i] = mErosaoRepeticoesTanen[i] * 100 / somatTrafET[i];
+            } else {
+                porcentErosaoET[i] = 0d;
+            }
+            if (!mFadigaRepeticoesTanen[i].equals(DadosFrag.INFINITO)) {
+                porcentFadigaET[i] = mFadigaRepeticoesTanen[i] * 100 / somatTrafET[i];
+            } else {
+                porcentFadigaET[i] = 0d;
+            }
+            ErosaoTotal += porcentErosaoET[i];
+            FadigaTotal += porcentFadigaET[i];
+        }
+
+        System.out.println("\n <>\nErosao Total = " + ErosaoTotal + "\nFadiga Total = " + FadigaTotal);
     }
 }
