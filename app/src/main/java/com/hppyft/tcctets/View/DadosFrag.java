@@ -1,9 +1,9 @@
 package com.hppyft.tcctets.View;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -63,7 +63,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
     }
 
     private void loadData() {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         mBinding.fckField.setText(Float.toString(sharedPref.getFloat(Keys.fctKey, 0f)));
         mBinding.projecaoCrescimentoField.setText(Float.toString(sharedPref.getFloat(Keys.projecaoCrescimentoKey, 0f)));
         mBinding.cbrField.setText(Float.toString(sharedPref.getFloat(Keys.cbrKey, 0f)));
@@ -156,7 +156,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
     }
 
     private void onSubBaseSelected(RadioButton subbaseButton) {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(Keys.tipoSubBaseKey, subbaseButton.getId());
         editor.commit();
@@ -164,7 +164,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
     @Override
     public void onEspessuraClicked(RadioButton radioButton) {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(Keys.espessuraKey, radioButton.getId());
         editor.commit();
@@ -172,7 +172,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
     @Override
     public void onAcostamentoClicked(RadioButton radioButton) {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(Keys.acostamentoKey, radioButton.getId());
         editor.commit();
@@ -180,7 +180,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
     @Override
     public void onTransferenciaClicked(RadioButton radioButton) {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(Keys.barrasTransferenciaKey, radioButton.getId());
         editor.commit();
@@ -197,7 +197,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
                     dialog.dismiss();
                     mBinding.setSelectedCarga(((AlertDialog) dialog).getListView().getCheckedItemPosition());
                     mBinding.tipoCargaEditText.setText(tipoCargaList[mBinding.getSelectedCarga()]);
-                    SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putInt(Keys.tipoCargaKey, mBinding.getSelectedCarga());
                     editor.commit();
@@ -224,14 +224,14 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
     }
 
     private void calculateErosao() {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         //TODO 25cm o qual eh a espessura chutada
-        double hCM = 25;
+        double hCM = 25.0;
         //Conversao para inches
         double hI = hCM / 2.54;
         double kConvertido = defineK();
         double fsc = NonStaticData.getFSC(Objects.requireNonNull(getActivity()));
-        double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * kConvertido)), 0.25);
+        double L = Math.pow((4000000.0 * (Math.pow(hI, 3.0)) / (11.73 * kConvertido)), 0.25);
 
         boolean comAcostamento = false;
         switch (sharedPref.getInt(Keys.acostamentoKey, -1)) {
@@ -265,56 +265,56 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         double f7 = 0;
         double c2 = 0;
         if (comAcostamento && comBarras) {
-            f6 = 1;
-            f7 = 1;
+            f6 = 1.0;
+            f7 = 1.0;
             c2 = 0.94;
-            pcSimples = 0.018 + 72.99 / L + 323.1 / Math.pow(L, 2) + 1620 / Math.pow(L, 3);
-            pcTanen = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2) + 23848 / Math.pow(L, 3);
+            pcSimples = 0.018 + 72.99 / L + 323.1 / Math.pow(L, 2.0) + 1620.0 / Math.pow(L, 3.0);
+            pcTanen = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2.0) + 23848.0 / Math.pow(L, 3.0);
         } else if (comAcostamento) {
-            f6 = 1.001 - Math.pow((0.26363 - kConvertido / 3034.5), 2);
-            f7 = 1;
+            f6 = 1.001 - Math.pow((0.26363 - kConvertido / 3034.5), 2.0);
+            f7 = 1.0;
             c2 = 0.94;
-            pcSimples = 0.5874 + 65.108 / L + 1130.9 / Math.pow(L, 2) - 5245.8 / Math.pow(L, 3);
-            pcTanen = 1.47 + 102.2 / L - 1072 / Math.pow(L, 2) + 14451 / Math.pow(L, 3);
+            pcSimples = 0.5874 + 65.108 / L + 1130.9 / Math.pow(L, 2.0) - 5245.8 / Math.pow(L, 3.0);
+            pcTanen = 1.47 + 102.2 / L - 1072.0 / Math.pow(L, 2.0) + 14451.0 / Math.pow(L, 3.0);
         } else if (comBarras) {
             f7 = 0.896;
-            f6 = 1;
+            f6 = 1.0;
             c2 = 0.06;
-            pcSimples = -0.3019 + 128.85 / L + 1105.8 / Math.pow(L, 2) + 3269.1 / Math.pow(L, 3);
-            pcTanen = 1.258 + 97.491 / L + 1484.1 / Math.pow(L, 2) - 180 / Math.pow(L, 3);
+            pcSimples = -0.3019 + 128.85 / L + 1105.8 / Math.pow(L, 2.0) + 3269.1 / Math.pow(L, 3.0);
+            pcTanen = 1.258 + 97.491 / L + 1484.1 / Math.pow(L, 2.0) - 180.0 / Math.pow(L, 3.0);
         } else {
             f7 = 0.896;
             f6 = 0.95;
             c2 = 0.06;
-            pcSimples = 1.571 + 46.127 / L + 4372.7 / Math.pow(L, 2) - 22886 / Math.pow(L, 3);
-            pcTanen = 1.847 + 213.68 / L - 1260.8 / Math.pow(L, 2) + 22989 / Math.pow(L, 3);
+            pcSimples = 1.571 + 46.127 / L + 4372.7 / Math.pow(L, 2.0) - 22886.0 / Math.pow(L, 3.0);
+            pcTanen = 1.847 + 213.68 / L - 1260.8 / Math.pow(L, 2.0) + 22989.0 / Math.pow(L, 3.0);
         }
 
         Double[] f5Simples = new Double[10];
         //Comeca em 6 e vai ateh 15
         for (int i = 0, carga = 6; i < 10; i++, carga++) {
-            double cargaConvertida = (carga * 10 * fsc) / 4.45;
-            f5Simples[i] = cargaConvertida / 18;
+            double cargaConvertida = (carga * 10.0 * fsc) / 4.45;
+            f5Simples[i] = cargaConvertida / 18.0;
         }
 
         Double[] f5Tanen = new Double[18];
         //Comeca em 13 e vai ateh 30
         for (int i = 0, carga = 13; i < 18; i++, carga++) {
-            double cargaConvertida = (carga * 10 * fsc) / 4.45;
-            f5Tanen[i] = cargaConvertida / 36;
+            double cargaConvertida = (carga * 10.0 * fsc) / 4.45;
+            f5Tanen[i] = cargaConvertida / 36.0;
         }
 
-        double c1 = 1 - Math.pow(((kConvertido / 2000) * 4 / hI), 2);
+        double c1 = 1.0 - Math.pow(((kConvertido / 2000.0) * 4.0 / hI), 2.0);
 
         Double[] nRepeticoesSimples = new Double[10];
         Double[] nRepeticoesTanen = new Double[18];
 
         for (int i = 0; i < nRepeticoesSimples.length; i++) {
             double deflexaoSimples = pcSimples * f5Simples[i] * f6 * f7 / kConvertido;
-            double pSimples = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoSimples, 2) / hI;
+            double pSimples = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoSimples, 2.0) / hI;
             double cXp = c1 * pSimples;
             if (cXp > 9) {
-                nRepeticoesSimples[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2)));
+                nRepeticoesSimples[i] = Math.pow(10.0, (14.524 - 6.777 * Math.pow((cXp - 9.0), 0.103) - Math.log10(c2)));
             } else {
                 nRepeticoesSimples[i] = INFINITO;
             }
@@ -322,12 +322,12 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
         NonStaticData.setmErosaoRepeticoesSimples(nRepeticoesSimples);
 
-        for (int i = 0; i < nRepeticoesTanen.length; i++) {
+        for (int i = 0; i < nRepeticoesTanen.length; i++) { //TODO separar tanen
             double deflexaoTanen = pcTanen * f5Tanen[i] * f6 * f7 / kConvertido;
-            double pTanen = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoTanen, 2) / hI;
+            double pTanen = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoTanen, 2.0) / hI;
             double cXp = c1 * pTanen;
             if (cXp > 9) {
-                nRepeticoesTanen[i] = Math.pow(10, (14.524 - 6.777 * Math.pow((cXp - 9), 0.103) - Math.log10(c2)));
+                nRepeticoesTanen[i] = Math.pow(10.0, (14.524 - 6.777 * Math.pow((cXp - 9.0), 0.103) - Math.log10(c2)));
             } else {
                 nRepeticoesTanen[i] = INFINITO;
             }
@@ -337,7 +337,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
     }
 
     private void calculateFadiga() {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         //TODO 25cm o qual eh a espessura chutada
         double hCM = 25;
         //Converte a espessura para inches
@@ -351,7 +351,7 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         //Converte FCT
         double fctConvertido = fct * 145.038;
         //Calcula L
-        double L = Math.pow((4000000 * (Math.pow(hI, 3)) / (11.73 * kConvertido)), 0.25);
+        double L = Math.pow((4000000.0 * (Math.pow(hI, 3.0)) / (11.73 * kConvertido)), 0.25);
         //Define se tem ou nao acostamento
         boolean comAcostamento = false;
         switch (sharedPref.getInt(Keys.acostamentoKey, -1)) {
@@ -375,19 +375,19 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
             meTanen = (2005.4 - 1980.9 * Math.log10(L) + 99.008 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
             f2 = 1;
         } else {
-            meSimples = -1600 + 2525 * Math.log10(L) + 24.42 * L + 0.204 * Math.pow(L, 2);
-            meTanen = 3029 - 2966.8 * Math.log10(L) + 133.69 * L - 0.0632 * Math.pow(L, 2);
-            f2 = 0.892 + hI / 85.71 - (Math.pow(hI, 2) / 3000);
+            meSimples = -1600.0 + 2525.0 * Math.log10(L) + 24.42 * L + 0.204 * Math.pow(L, 2.0);
+            meTanen = 3029.0 - 2966.8 * Math.log10(L) + 133.69 * L - 0.0632 * Math.pow(L, 2.0);
+            f2 = 0.892 + hI / 85.71 - (Math.pow(hI, 2.0) / 3000.0);
         }
 
 
         //Calcular F1 SIMPLES pra cada carga do eixo simples
         Double[] f1Simples = new Double[10];
         //Comeca em 6 e vai ateh 15
-        double carga = 6;
+        double carga = 6.0;
         for (int i = 0; i < 10; i++) {
-            double cargaConvertida = (carga * 10 * fsc) / 4.45;
-            double f1 = Math.pow((24 / cargaConvertida), 0.06) * cargaConvertida / 18;
+            double cargaConvertida = (carga * 10.0 * fsc) / 4.45;
+            double f1 = Math.pow((24.0 / cargaConvertida), 0.06) * cargaConvertida / 18.0;
             f1Simples[i] = f1;
             carga++;
         }
@@ -395,10 +395,10 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         //Calcula F1 TANEN pra cada carga do eixo tanen
         Double[] f1Tanen = new Double[18];
         //Comeca em 13 e vai ateh o 30
-        carga = 13;
+        carga = 13.0;
         for (int i = 0; i < 18; i++) {
-            double cargaConvertida = (carga * 10 * fsc) / 4.45;
-            double f1 = Math.pow((48 / cargaConvertida), 0.06) * cargaConvertida / 36;
+            double cargaConvertida = (carga * 10.0 * fsc) / 4.45;
+            double f1 = Math.pow((48.0 / cargaConvertida), 0.06) * cargaConvertida / 36.0;
             f1Tanen[i] = f1;
             carga++;
         }
@@ -411,12 +411,12 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
 
         //Calcula o numero de repeticoes suportadas pra cada carga
         for (int i = 0; i < nRepeticoesSimples.length; i++) {
-            double tensaoSimples = 6 * meSimples * f1Simples[i] * f2 * f3 * f4 / Math.pow(hI, 2);
+            double tensaoSimples = 6.0 * meSimples * f1Simples[i] * f2 * f3 * f4 / Math.pow(hI, 2.0);
             double tensaoSimplesPeloFCT = tensaoSimples / fctConvertido;
             if (tensaoSimplesPeloFCT > 0.55) {
-                nRepeticoesSimples[i] = Math.pow(10, (11.737 - 12.077 * tensaoSimplesPeloFCT));
+                nRepeticoesSimples[i] = Math.pow(10.0, (11.737 - 12.077 * tensaoSimplesPeloFCT));
             } else if (tensaoSimplesPeloFCT > 0.45 && tensaoSimplesPeloFCT < 0.55) {
-                nRepeticoesSimples[i] = Math.pow((4.2577 / (tensaoSimplesPeloFCT - 0.4325)), 3.268);
+                nRepeticoesSimples[i] = Math.pow((4.2577 / (tensaoSimplesPeloFCT - 0.4325)), 3.268); //TODO pra i=8 3402152.243342113 & i=9 550922.650594382 calculo aparentemente tah certo
             } else {
                 nRepeticoesSimples[i] = INFINITO;
             }
@@ -425,11 +425,11 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
         NonStaticData.setmFadigaRepeticoesSimples(nRepeticoesSimples);
 
         //Calcula o numero de repeticoes suportadas pra cada carga
-        for (int i = 0; i < nRepeticoesTanen.length; i++) {
-            double tensaoTanen = 6 * meTanen * f1Tanen[i] * f2 * f3 * f4 / Math.pow(hI, 2);
+        for (int i = 0; i < nRepeticoesTanen.length; i++) { //TODO separar os tanen
+            double tensaoTanen = 6.0 * meTanen * f1Tanen[i] * f2 * f3 * f4 / Math.pow(hI, 2.0);
             double tensaoTanenPeloFCT = tensaoTanen / fctConvertido;
             if (tensaoTanenPeloFCT > 0.55) {
-                nRepeticoesTanen[i] = Math.pow(10, (11.737 - 12.077 * tensaoTanenPeloFCT));
+                nRepeticoesTanen[i] = Math.pow(10.0, (11.737 - 12.077 * tensaoTanenPeloFCT));
             } else if (tensaoTanenPeloFCT > 0.45 && tensaoTanenPeloFCT < 0.55) {
                 nRepeticoesTanen[i] = Math.pow((4.2577 / (tensaoTanenPeloFCT - 0.4325)), 3.268);
             } else {

@@ -1,8 +1,8 @@
 package com.hppyft.tcctets.Data;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.hppyft.tcctets.R;
 import com.hppyft.tcctets.View.DadosFrag;
@@ -33,7 +33,7 @@ public class NonStaticData {
     }
 
     private static Long[] getTrafegoEixoSimples(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         Long[] trafegoES = new Long[10];
         trafegoES[0] = sharedPref.getLong(Keys.trafegoEsCarga6Key, 0);
         trafegoES[1] = sharedPref.getLong(Keys.trafegoEsCarga7Key, 0);
@@ -49,7 +49,7 @@ public class NonStaticData {
     }
 
     private static Long[] getTrafegoEixoTD(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         Long[] trafegoETD = new Long[11];
         trafegoETD[0] = sharedPref.getLong(Keys.trafegoEtdCarga13Key, 0);
         trafegoETD[1] = sharedPref.getLong(Keys.trafegoEtdCarga14Key, 0);
@@ -66,7 +66,7 @@ public class NonStaticData {
     }
 
     private static Long[] getTrafegoEixoTT(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         Long[] trafegoETT = new Long[9];
         trafegoETT[0] = sharedPref.getLong(Keys.trafegoEttCarga22Key, 0);
         trafegoETT[1] = sharedPref.getLong(Keys.trafegoEttCarga23Key, 0);
@@ -145,7 +145,7 @@ public class NonStaticData {
     }
 
     public static Double defineK(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
 
         float cbr = sharedPref.getFloat(Keys.cbrKey, 0f);
         int subBase = sharedPref.getInt(Keys.tipoSubBaseKey, -1);
@@ -251,7 +251,7 @@ public class NonStaticData {
     }
 
     public static double getFSC(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         int carga = sharedPref.getInt(Keys.tipoCargaKey, -1);
         switch (carga) {
             case TipoCarga.FSC10:
@@ -268,7 +268,7 @@ public class NonStaticData {
     }
 
     public static void calculatePorcentagemTotal(Activity activity) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         double proj = sharedPref.getFloat(Keys.projecaoCrescimentoKey, 0);
 
         Double[] somatTrafES = calculateSomatorioTrafegoES(activity, proj);

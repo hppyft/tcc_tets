@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -71,7 +72,7 @@ public class EixoSimplesFrag extends Fragment {
     }
 
     private void loadData() {
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
         mBinding.carga6.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga6Key, 0)));
         mBinding.carga7.repeticaoEdit.setText(Long.toString(sharedPref.getLong(Keys.trafegoEsCarga7Key, 0)));

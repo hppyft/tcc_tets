@@ -3,6 +3,7 @@ package com.hppyft.tcctets.Util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,7 +30,7 @@ public class SaveTextOnSharedPrefs implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable editable) {
-        SharedPreferences sharedPref = mActivity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         try {
             mValueEdition.putValueOnEditor(editor);
