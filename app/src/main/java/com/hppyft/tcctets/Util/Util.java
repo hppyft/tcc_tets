@@ -9,4 +9,12 @@ public class Util {
         }
         return newStrings;
     }
+
+    public static double sumArray(Double[] array) {
+        double result = 0.0;
+        for (Double db : array) {
+            result += db;
+        }
+        return result;
+    }
 }

@@ -2,6 +2,7 @@ package com.hppyft.tcctets.Data;
 
 public class StaticData {
 
+    public static final Double INFINITO = -1.0;
     private static String[] tipoCargaList;
 
     public static String[] getTipoCargaList() {
