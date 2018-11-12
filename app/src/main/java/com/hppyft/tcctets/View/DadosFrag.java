@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.hppyft.tcctets.Data.NonStaticData;
+import com.hppyft.tcctets.Data.Model;
 import com.hppyft.tcctets.Listener.CalculateListener;
 import com.hppyft.tcctets.Data.Keys;
 import com.hppyft.tcctets.Data.StaticData;
@@ -205,13 +205,11 @@ public class DadosFrag extends Fragment implements OpenDialogListener, Calculate
                 .show();
     }
 
-    //CALCULOS
     @Override
     public void calculate() {
         try {
-            NonStaticData.calculate(Objects.requireNonNull(getActivity()));
+            Model.calculate(Objects.requireNonNull(getActivity()));
         } catch (Exception e) {
-            e.printStackTrace();
             Toast.makeText(getContext(), "Um ou mais dados não foram preenchidos corretamente", Toast.LENGTH_SHORT).show();
         }
     }

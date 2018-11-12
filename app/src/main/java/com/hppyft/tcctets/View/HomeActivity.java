@@ -34,4 +34,5 @@ public class HomeActivity extends AppCompatActivity {
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }
+
 }

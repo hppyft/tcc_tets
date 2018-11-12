@@ -17,10 +17,6 @@ public class TrafegoPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context mContext;
 
-    private EixoSimplesFrag eixoSimplesFrag;
-    private EixoTDFrag eixoTDFrag;
-    private EixoTTFrag eixoTTFrag;
-
     public TrafegoPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         mContext = context;
@@ -30,14 +26,11 @@ public class TrafegoPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case EIXO_SIMPLES_FRAG_PAGE_NUMBER:
-                eixoSimplesFrag = new EixoSimplesFrag();
-                return eixoSimplesFrag;
+                return new EixoSimplesFrag();
             case EIXO_TD_PAGE_NUMBER:
-                eixoTDFrag = new EixoTDFrag();
-                return eixoTDFrag;
+                return new EixoTDFrag();
             case EIXO_TT_FRAG_PAGE_NUMBER:
-                eixoTTFrag = new EixoTTFrag();
-                return eixoTTFrag;
+                return new EixoTTFrag();
             default:
                 return null;
         }
@@ -64,17 +57,5 @@ public class TrafegoPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return NUM_PAGES;
-    }
-
-    public EixoSimplesFrag getEixoSimplesFrag() {
-        return eixoSimplesFrag;
-    }
-
-    public EixoTDFrag getEixoTDFrag() {
-        return eixoTDFrag;
-    }
-
-    public EixoTTFrag getEixoTTFrag() {
-        return eixoTTFrag;
     }
 }

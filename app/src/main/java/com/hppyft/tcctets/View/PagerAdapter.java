@@ -10,14 +10,9 @@ import com.hppyft.tcctets.R;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
 
-    public static final int NUM_PAGES = 3;
+    public static final int NUM_PAGES = 2;
     private static final int DADOS_FRAG_PAGE_NUMBER = 0;
     private static final int TRAFEGO_FRAG_PAGE_NUMBER = 1;
-    private static final int RESULTADOS_FRAG_PAGE_NUMBER = 2;
-
-    private DadosFrag dadosFrag;
-    private TrafegoFrag trafegoFrag;
-    private ResultadosFrag resultadosFrag;
 
     private Context mContext;
 
@@ -30,14 +25,9 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case DADOS_FRAG_PAGE_NUMBER:
-                dadosFrag = new DadosFrag();
-                return dadosFrag;
+                return new DadosFrag();
             case TRAFEGO_FRAG_PAGE_NUMBER:
-                trafegoFrag = new TrafegoFrag();
-                return trafegoFrag;
-            case RESULTADOS_FRAG_PAGE_NUMBER:
-                resultadosFrag = new ResultadosFrag();
-                return resultadosFrag;
+                return new TrafegoFrag();
             default:
                 return null;
         }
@@ -51,8 +41,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                 return mContext.getString(R.string.dados_frag_title);
             case TRAFEGO_FRAG_PAGE_NUMBER:
                 return mContext.getString(R.string.trafego_frag_title);
-            case RESULTADOS_FRAG_PAGE_NUMBER:
-                return mContext.getString(R.string.resultados_frag_title);
             default:
                 return null;
         }
@@ -63,15 +51,4 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
         return NUM_PAGES;
     }
 
-    public DadosFrag getDadosFrag() {
-        return dadosFrag;
-    }
-
-    public TrafegoFrag getTrafegoFrag() {
-        return trafegoFrag;
-    }
-
-    public ResultadosFrag getResultadosFrag() {
-        return resultadosFrag;
-    }
 }

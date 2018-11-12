@@ -14,17 +14,14 @@ import com.hppyft.tcctets.databinding.FragTrafegoBinding;
 
 public class TrafegoFrag extends Fragment {
 
-    private FragTrafegoBinding mBinding;
-    private TrafegoPagerAdapter mPagerAdapter; //TODO talvez tirar esses atributos
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.frag_trafego, container, false);
+        FragTrafegoBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.frag_trafego, container, false);
 
-        mPagerAdapter = new TrafegoPagerAdapter(getFragmentManager(), getContext());
+        TrafegoPagerAdapter mPagerAdapter = new TrafegoPagerAdapter(getFragmentManager(), getContext());
         mBinding.trafegoPager.setAdapter(mPagerAdapter);
-        mBinding.layoutTabTrafego.setupWithViewPager(mBinding.trafegoPager); //TODO Verificar um jeito de nao scrollar horizontalmente
+        mBinding.layoutTabTrafego.setupWithViewPager(mBinding.trafegoPager);
         mBinding.trafegoPager.setOffscreenPageLimit(TrafegoPagerAdapter.NUM_PAGES);
 
         return mBinding.getRoot();

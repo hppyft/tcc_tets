@@ -1,6 +1,7 @@
 package com.hppyft.tcctets.Data;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.util.Pair;
@@ -8,39 +9,45 @@ import android.support.v4.util.Pair;
 import com.hppyft.tcctets.R;
 import com.hppyft.tcctets.Util.Triple;
 import com.hppyft.tcctets.Util.Util;
+import com.hppyft.tcctets.View.ResultadosActivity;
 
 import java.util.Objects;
 
-public class NonStaticData {
+public class Model {
 
     private static double ajusteETT = 2.85;
 
-    private static Double[] mSomatorioTrafegoES;
-    private static Double[] mSomatorioTrafegoETD;
-    private static Double[] mSomatorioTrafegoETT;
+    public static Double[] mSomatorioTrafegoES;
+    public static Double[] mSomatorioTrafegoETD;
+    public static Double[] mSomatorioTrafegoETT;
 
-    private static Double[] mFadigaSuportadaES;
-    private static Double[] mFadigaSuportadaETD;
-    private static Double[] mFadigaSuportadaETT;
+    public static Double[] mFadigaSuportadaES;
+    public static Double[] mFadigaSuportadaETD;
+    public static Double[] mFadigaSuportadaETT;
 
-    private static Double[] mErosaoSuportadaES;
-    private static Double[] mErosaoSuportadaETD;
-    private static Double[] mErosaoSuportadaETT;
+    public static Double[] mErosaoSuportadaES;
+    public static Double[] mErosaoSuportadaETD;
+    public static Double[] mErosaoSuportadaETT;
 
-    private static Double[] mErosaoPercentES;
-    private static Double[] mErosaoPercentETD;
-    private static Double[] mErosaoPercentETT;
+    public static Double[] mErosaoPercentES;
+    public static Double[] mErosaoPercentETD;
+    public static Double[] mErosaoPercentETT;
 
-    private static Double[] mFadigaPercentES;
-    private static Double[] mFadigaPercentETD;
-    private static Double[] mFadigaPercentETT;
+    public static Double[] mFadigaPercentES;
+    public static Double[] mFadigaPercentETD;
+    public static Double[] mFadigaPercentETT;
 
-    private static Double mEspessura;
+    public static Double mEspessura;
 
+    private static void startResultadosActivity(Activity activity) {
+        Intent intent = new Intent(activity, ResultadosActivity.class);
+        activity.startActivity(intent);
+    }
 
-    public static void calculate(Activity activity) {
+    public static void calculate(Activity activity) throws Exception {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         double proj = sharedPref.getFloat(Keys.projecaoCrescimentoKey, 0);
+        if (proj < 1 || proj > 10) throw new Exception();
 
         mSomatorioTrafegoES = calculateSomatorioTrafegoES(activity, proj);
         mSomatorioTrafegoETD = calculateSomatorioTrafegoETD(activity, proj);
@@ -58,14 +65,14 @@ public class NonStaticData {
         while (!finished) {
             Triple<Double[], Double[], Double[]> fadigaAtual = calculateFadiga(activity, espessuraAtual);
             Triple<Double[], Double[], Double[]> erosaoAtual = calculateErosao(activity, espessuraAtual);
-            Pair<Double[], Double[]> percentES = calculatePorcentagemES(activity, erosaoAtual.getFirst(), fadigaAtual.getFirst());
-            Pair<Double[], Double[]> percentETD = calculatePorcentagemETD(activity, erosaoAtual.getSecond(), fadigaAtual.getSecond());
-            Pair<Double[], Double[]> percentETT = calculatePorcentagemETT(activity, erosaoAtual.getThird(), fadigaAtual.getThird());
+            Pair<Double[], Double[]> percentES = calculatePorcentagemES(erosaoAtual.getFirst(), fadigaAtual.getFirst());
+            Pair<Double[], Double[]> percentETD = calculatePorcentagemETD(erosaoAtual.getSecond(), fadigaAtual.getSecond());
+            Pair<Double[], Double[]> percentETT = calculatePorcentagemETT(erosaoAtual.getThird(), fadigaAtual.getThird());
 
             double erosaoTotal = Util.sumArray(percentES.first) + Util.sumArray(percentETD.first) + Util.sumArray(percentETT.first);
             double fadigaTotal = Util.sumArray(percentES.second) + Util.sumArray(percentETD.second) + Util.sumArray(percentETT.second);
 
-            boolean aceitavel = erosaoTotal > 100.0 || fadigaTotal > 100.0;
+            boolean aceitavel = !(erosaoTotal > 100.0 || fadigaTotal > 100.0);
 
             if (espessuraAnterior > espessuraAtual && !aceitavel) {
                 espessuraAtual = espessuraAnterior;
@@ -110,10 +117,10 @@ public class NonStaticData {
 
         mEspessura = espessuraAtual;
 
-        //TODO mostrar tela
+        startResultadosActivity(activity);
     }
 
-    private static Pair<Double[], Double[]> calculatePorcentagemES(Activity activity, Double[] erosaoES, Double[] fadigaES) {
+    private static Pair<Double[], Double[]> calculatePorcentagemES(Double[] erosaoES, Double[] fadigaES) {
         Double[] percentErosaoES = new Double[mSomatorioTrafegoES.length];
         Double[] percentFadigaES = new Double[mSomatorioTrafegoES.length];
         for (int i = 0; i < mSomatorioTrafegoES.length; i++) {
@@ -131,7 +138,7 @@ public class NonStaticData {
         return new Pair<>(percentErosaoES, percentFadigaES);
     }
 
-    private static Pair<Double[], Double[]> calculatePorcentagemETD(Activity activity, Double[] erosaoETD, Double[] fadigaETD) {
+    private static Pair<Double[], Double[]> calculatePorcentagemETD(Double[] erosaoETD, Double[] fadigaETD) {
         Double[] percentErosaoETD = new Double[mSomatorioTrafegoETD.length];
         Double[] percentFadigaETD = new Double[mSomatorioTrafegoETD.length];
 
@@ -150,7 +157,7 @@ public class NonStaticData {
         return new Pair<>(percentErosaoETD, percentFadigaETD);
     }
 
-    private static Pair<Double[], Double[]> calculatePorcentagemETT(Activity activity, Double[] erosaoETT, Double[] fadigaETT) {
+    private static Pair<Double[], Double[]> calculatePorcentagemETT(Double[] erosaoETT, Double[] fadigaETT) {
         Double[] percentErosaoETT = new Double[mSomatorioTrafegoETT.length];
         Double[] percentFadigaETT = new Double[mSomatorioTrafegoETT.length];
 
@@ -169,15 +176,14 @@ public class NonStaticData {
         return new Pair<>(percentErosaoETT, percentFadigaETT);
     }
 
-    private static Triple<Double[], Double[], Double[]> calculateErosao(Activity activity, double espessura) {
+    private static Triple<Double[], Double[], Double[]> calculateErosao(Activity activity, double espessura) throws Exception {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
-        double hCM = espessura;
-        double hI = hCM / 2.54;
+        double hI = espessura / 2.54;
         double kConvertido = defineK(activity);
-        double fsc = NonStaticData.getFSC(activity);
+        double fsc = Model.getFSC(activity);
         double L = Math.pow((4000000.0 * (Math.pow(hI, 3.0)) / (11.73 * kConvertido)), 0.25);
 
-        boolean comAcostamento = false;
+        boolean comAcostamento;
         switch (sharedPref.getInt(Keys.acostamentoKey, -1)) {
             case R.id.com_acostamento_button:
                 comAcostamento = true;
@@ -186,11 +192,10 @@ public class NonStaticData {
                 comAcostamento = false;
                 break;
             default:
-                //TODO exception
-                break;
+                throw new Exception();
         }
 
-        boolean comBarras = false;
+        boolean comBarras;
         switch (sharedPref.getInt(Keys.barrasTransferenciaKey, -1)) {
             case R.id.barras_button:
                 comBarras = true;
@@ -199,12 +204,11 @@ public class NonStaticData {
                 comBarras = false;
                 break;
             default:
-                //TODO exception
-                break;
+                throw new Exception();
         }
 
         double pcSimples;
-        double pcTanen;
+        double pcTandem;
         double f6;
         double f7;
         double c2;
@@ -213,25 +217,25 @@ public class NonStaticData {
             f7 = 1.0;
             c2 = 0.94;
             pcSimples = 0.018 + 72.99 / L + 323.1 / Math.pow(L, 2.0) + 1620.0 / Math.pow(L, 3.0);
-            pcTanen = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2.0) + 23848.0 / Math.pow(L, 3.0);
+            pcTandem = 0.0345 + 146.25 / L - 2385.6 / Math.pow(L, 2.0) + 23848.0 / Math.pow(L, 3.0);
         } else if (comAcostamento) {
             f6 = 1.001 - Math.pow((0.26363 - kConvertido / 3034.5), 2.0);
             f7 = 1.0;
             c2 = 0.94;
             pcSimples = 0.5874 + 65.108 / L + 1130.9 / Math.pow(L, 2.0) - 5245.8 / Math.pow(L, 3.0);
-            pcTanen = 1.47 + 102.2 / L - 1072.0 / Math.pow(L, 2.0) + 14451.0 / Math.pow(L, 3.0);
+            pcTandem = 1.47 + 102.2 / L - 1072.0 / Math.pow(L, 2.0) + 14451.0 / Math.pow(L, 3.0);
         } else if (comBarras) {
             f7 = 0.896;
             f6 = 1.0;
             c2 = 0.06;
             pcSimples = -0.3019 + 128.85 / L + 1105.8 / Math.pow(L, 2.0) + 3269.1 / Math.pow(L, 3.0);
-            pcTanen = 1.258 + 97.491 / L + 1484.1 / Math.pow(L, 2.0) - 180.0 / Math.pow(L, 3.0);
+            pcTandem = 1.258 + 97.491 / L + 1484.1 / Math.pow(L, 2.0) - 180.0 / Math.pow(L, 3.0);
         } else {
             f7 = 0.896;
             f6 = 0.95;
             c2 = 0.06;
             pcSimples = 1.571 + 46.127 / L + 4372.7 / Math.pow(L, 2.0) - 22886.0 / Math.pow(L, 3.0);
-            pcTanen = 1.847 + 213.68 / L - 1260.8 / Math.pow(L, 2.0) + 22989.0 / Math.pow(L, 3.0);
+            pcTandem = 1.847 + 213.68 / L - 1260.8 / Math.pow(L, 2.0) + 22989.0 / Math.pow(L, 3.0);
         }
 
         Double[] f5Simples = new Double[10];
@@ -241,18 +245,18 @@ public class NonStaticData {
             f5Simples[i] = cargaConvertida / 18.0;
         }
 
-        Double[] f5TanenDuplo = new Double[11];
+        Double[] f5TandemDuplo = new Double[11];
         //Comeca em 13 e vai ateh 23
-        for (int i = 0, carga = 13; i < f5TanenDuplo.length; i++, carga++) {
+        for (int i = 0, carga = 13; i < f5TandemDuplo.length; i++, carga++) {
             double cargaConvertida = (carga * 10.0 * fsc) / 4.45;
-            f5TanenDuplo[i] = cargaConvertida / 36.0;
+            f5TandemDuplo[i] = cargaConvertida / 36.0;
         }
 
-        Double[] f5TanenTriplo = new Double[9];
+        Double[] f5TandemTriplo = new Double[9];
         //Comeca em 22 e vai ateh 30
-        for (int i = 0, carga = 22; i < f5TanenTriplo.length; i++, carga++) {
+        for (int i = 0, carga = 22; i < f5TandemTriplo.length; i++, carga++) {
             double cargaConvertida = ((carga * 10.0 * fsc) / 4.45) / 3;
-            f5TanenTriplo[i] = cargaConvertida / 36.0;
+            f5TandemTriplo[i] = cargaConvertida / 36.0;
         }
 
         double c1 = 1.0 - Math.pow(((kConvertido / 2000.0) * 4.0 / hI), 2.0);
@@ -269,51 +273,43 @@ public class NonStaticData {
             }
         }
 
-        Double[] erosaoTanenDuplo = new Double[11];
-        for (int i = 0; i < erosaoTanenDuplo.length; i++) {
-            double deflexaoTanen = pcTanen * f5TanenDuplo[i] * f6 * f7 / kConvertido;
-            double pTanen = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoTanen, 2.0) / hI;
-            double cXp = c1 * pTanen;
+        Double[] erosaoTandemDuplo = new Double[11];
+        for (int i = 0; i < erosaoTandemDuplo.length; i++) {
+            double deflexaoTandem = pcTandem * f5TandemDuplo[i] * f6 * f7 / kConvertido;
+            double pTandem = 268.7 * (Math.pow(kConvertido, 1.27)) * Math.pow(deflexaoTandem, 2.0) / hI;
+            double cXp = c1 * pTandem;
             if (cXp > 9) {
-                erosaoTanenDuplo[i] = Math.pow(10.0, (14.524 - 6.777 * Math.pow((cXp - 9.0), 0.103) - Math.log10(c2)));
+                erosaoTandemDuplo[i] = Math.pow(10.0, (14.524 - 6.777 * Math.pow((cXp - 9.0), 0.103) - Math.log10(c2)));
             } else {
-                erosaoTanenDuplo[i] = StaticData.INFINITO;
+                erosaoTandemDuplo[i] = StaticData.INFINITO;
             }
         }
 
-        Double[] erosaoTanenTriplo = new Double[9];
-        for (int i = 0; i < erosaoTanenTriplo.length; i++) {
-            double deflexaoTanen = pcSimples * ajusteETT * f5TanenTriplo[i] * f6 * f7 / kConvertido; //TODO usado pcSimples * 2.73 pra ajuste de ETT
-            double pTanen = 268.7 * Math.pow(kConvertido, 1.27) * Math.pow(deflexaoTanen, 2.0) / hI;
-            double cXp = c1 * pTanen;
+        Double[] erosaoTandemTriplo = new Double[9];
+        for (int i = 0; i < erosaoTandemTriplo.length; i++) {
+            double deflexaoTandem = pcSimples * ajusteETT * f5TandemTriplo[i] * f6 * f7 / kConvertido; //TODO usado pcSimples * ajusteETT pra ajustar valor
+            double pTandem = 268.7 * Math.pow(kConvertido, 1.27) * Math.pow(deflexaoTandem, 2.0) / hI;
+            double cXp = c1 * pTandem;
             if (cXp > 9) {
-                erosaoTanenTriplo[i] = Math.pow(10.0, (14.524 - 6.777 * Math.pow((cXp - 9.0), 0.103) - Math.log10(c2)));
+                erosaoTandemTriplo[i] = Math.pow(10.0, (14.524 - 6.777 * Math.pow((cXp - 9.0), 0.103) - Math.log10(c2)));
             } else {
-                erosaoTanenTriplo[i] = StaticData.INFINITO;
+                erosaoTandemTriplo[i] = StaticData.INFINITO;
             }
-//            System.out.println("\n cXp -->" + cXp);
-//            System.out.println("\n erosaoTanenTriplo[" + i + "] -->" + erosaoTanenTriplo[i]);
         }
 
-        return new Triple<>(erosaoSimples, erosaoTanenDuplo, erosaoTanenTriplo);
+        return new Triple<>(erosaoSimples, erosaoTandemDuplo, erosaoTandemTriplo);
     }
 
-    private static Triple<Double[], Double[], Double[]> calculateFadiga(Activity activity, double espessura) {
+    private static Triple<Double[], Double[], Double[]> calculateFadiga(Activity activity, double espessura) throws Exception {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
-        double hCM = espessura;
-        double hI = hCM / 2.54;
-        //Pega K
+        double hI = espessura / 2.54;
         double kConvertido = defineK(activity);
-        //Pega o FSC
-        double fsc = NonStaticData.getFSC(activity);
-        //Pega o FCT
+        double fsc = Model.getFSC(activity);
         double fct = sharedPref.getFloat(Keys.fctKey, 0f);
-        //Converte FCT
+        if (fct < 1 || fct > 10) throw new Exception();
         double fctConvertido = fct * 145.038;
-        //Calcula L
         double L = Math.pow((4000000.0 * (Math.pow(hI, 3.0)) / (11.73 * kConvertido)), 0.25);
-        //Define se tem ou nao acostamento
-        boolean comAcostamento = false;
+        boolean comAcostamento;
         switch (sharedPref.getInt(Keys.acostamentoKey, -1)) {
             case R.id.com_acostamento_button:
                 comAcostamento = true;
@@ -322,24 +318,22 @@ public class NonStaticData {
                 comAcostamento = false;
                 break;
             default:
-                //TODO exception
-                break;
+                throw new Exception();
         }
 
         double meSimples;
-        double meTanen;
+        double meTandem;
         double f2;
 
         if (comAcostamento) {
             meSimples = (-970.4 + 1202.6 * Math.log10(L) + 53.587 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
-            meTanen = (2005.4 - 1980.9 * Math.log10(L) + 99.008 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
+            meTandem = (2005.4 - 1980.9 * Math.log10(L) + 99.008 * L) * (0.8742 + 0.01088 * Math.pow(kConvertido, 0.447));
             f2 = 1;
         } else {
             meSimples = -1600.0 + 2525.0 * Math.log10(L) + 24.42 * L + 0.204 * Math.pow(L, 2.0);
-            meTanen = 3029.0 - 2966.8 * Math.log10(L) + 133.69 * L - 0.0632 * Math.pow(L, 2.0);
+            meTandem = 3029.0 - 2966.8 * Math.log10(L) + 133.69 * L - 0.0632 * Math.pow(L, 2.0);
             f2 = 0.892 + hI / 85.71 - (Math.pow(hI, 2.0) / 3000.0);
         }
-
 
         Double[] f1Simples = new Double[10];
         //Comeca em 6 e vai ateh 15
@@ -351,23 +345,23 @@ public class NonStaticData {
             carga++;
         }
 
-        Double[] f1TanenDuplo = new Double[11];
+        Double[] f1TandemDuplo = new Double[11];
         //Comeca em 13 e vai ateh o 23
         carga = 13.0;
-        for (int i = 0; i < f1TanenDuplo.length; i++) {
+        for (int i = 0; i < f1TandemDuplo.length; i++) {
             double cargaConvertida = (carga * 10.0 * fsc) / 4.45;
             double f1 = Math.pow((48.0 / cargaConvertida), 0.06) * cargaConvertida / 36.0;
-            f1TanenDuplo[i] = f1;
+            f1TandemDuplo[i] = f1;
             carga++;
         }
 
-        Double[] f1TanenTriplo = new Double[9];
+        Double[] f1TandemTriplo = new Double[9];
         //Comeca em 22 e vai ateh o 30
         carga = 22.0;
-        for (int i = 0; i < f1TanenTriplo.length; i++) {
+        for (int i = 0; i < f1TandemTriplo.length; i++) {
             double cargaConvertida = ((carga * 10.0 * fsc) / 4.45) / 3;
             double f1 = Math.pow((48.0 / cargaConvertida), 0.06) * cargaConvertida / 36.0;
-            f1TanenTriplo[i] = f1;
+            f1TandemTriplo[i] = f1;
             carga++;
         }
 
@@ -375,7 +369,6 @@ public class NonStaticData {
         double f4 = 0.953;
 
         Double[] fadigaRepeticoesSimples = new Double[10];
-        //Calcula o numero de repeticoes suportadas pra cada carga
         for (int i = 0; i < fadigaRepeticoesSimples.length; i++) {
             double tensaoSimples = 6.0 * meSimples * f1Simples[i] * f2 * f3 * f4 / Math.pow(hI, 2.0);
             double tensaoSimplesPeloFCT = tensaoSimples / fctConvertido;
@@ -388,41 +381,40 @@ public class NonStaticData {
             }
         }
 
-        Double[] fadigaTanenDuplo = new Double[11];
-        //Calcula o numero de repeticoes suportadas pra cada carga
-        for (int i = 0; i < fadigaTanenDuplo.length; i++) {
-            double tensaoTanen = 6.0 * meTanen * f1TanenDuplo[i] * f2 * f3 * f4 / Math.pow(hI, 2.0);
-            double tensaoTanenPeloFCT = tensaoTanen / fctConvertido;
-            if (tensaoTanenPeloFCT > 0.55) {
-                fadigaTanenDuplo[i] = Math.pow(10.0, (11.737 - 12.077 * tensaoTanenPeloFCT));
-            } else if (tensaoTanenPeloFCT > 0.45 && tensaoTanenPeloFCT < 0.55) {
-                fadigaTanenDuplo[i] = Math.pow((4.2577 / (tensaoTanenPeloFCT - 0.4325)), 3.268);
+        Double[] fadigaTandemDuplo = new Double[11];
+        for (int i = 0; i < fadigaTandemDuplo.length; i++) {
+            double tensaoTandem = 6.0 * meTandem * f1TandemDuplo[i] * f2 * f3 * f4 / Math.pow(hI, 2.0);
+            double tensaoTandemPeloFCT = tensaoTandem / fctConvertido;
+            if (tensaoTandemPeloFCT > 0.55) {
+                fadigaTandemDuplo[i] = Math.pow(10.0, (11.737 - 12.077 * tensaoTandemPeloFCT));
+            } else if (tensaoTandemPeloFCT > 0.45 && tensaoTandemPeloFCT < 0.55) {
+                fadigaTandemDuplo[i] = Math.pow((4.2577 / (tensaoTandemPeloFCT - 0.4325)), 3.268);
             } else {
-                fadigaTanenDuplo[i] = StaticData.INFINITO;
+                fadigaTandemDuplo[i] = StaticData.INFINITO;
             }
         }
 
-        Double[] fadigaTanenTriplo = new Double[9];
-        //Calcula o numero de repeticoes suportadas pra cada carga
-        for (int i = 0; i < fadigaTanenTriplo.length; i++) {
-            double tensaoTanen = 6.0 * meTanen * f1TanenTriplo[i] * f2 * f3 * f4 / Math.pow(hI, 2.0); //TODO usado meTanen para ajuste
-            double tensaoTanenPeloFCT = tensaoTanen / fctConvertido;
-            if (tensaoTanenPeloFCT > 0.55) {
-                fadigaTanenTriplo[i] = Math.pow(10.0, (11.737 - 12.077 * tensaoTanenPeloFCT));
-            } else if (tensaoTanenPeloFCT > 0.45 && tensaoTanenPeloFCT < 0.55) {
-                fadigaTanenTriplo[i] = Math.pow((4.2577 / (tensaoTanenPeloFCT - 0.4325)), 3.268);
+        Double[] fadigaTandemTriplo = new Double[9];
+        for (int i = 0; i < fadigaTandemTriplo.length; i++) {
+            double tensaoTandem = 6.0 * meTandem * f1TandemTriplo[i] * f2 * f3 * f4 / Math.pow(hI, 2.0);
+            double tensaoTandemPeloFCT = tensaoTandem / fctConvertido;
+            if (tensaoTandemPeloFCT > 0.55) {
+                fadigaTandemTriplo[i] = Math.pow(10.0, (11.737 - 12.077 * tensaoTandemPeloFCT));
+            } else if (tensaoTandemPeloFCT > 0.45 && tensaoTandemPeloFCT < 0.55) {
+                fadigaTandemTriplo[i] = Math.pow((4.2577 / (tensaoTandemPeloFCT - 0.4325)), 3.268);
             } else {
-                fadigaTanenTriplo[i] = StaticData.INFINITO;
+                fadigaTandemTriplo[i] = StaticData.INFINITO;
             }
         }
 
-        return new Triple<>(fadigaRepeticoesSimples, fadigaTanenDuplo, fadigaTanenTriplo);
+        return new Triple<>(fadigaRepeticoesSimples, fadigaTandemDuplo, fadigaTandemTriplo);
     }
 
-    private static Double defineK(Activity activity) {
+    private static Double defineK(Activity activity) throws Exception {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
 
         float cbr = sharedPref.getFloat(Keys.cbrKey, 0f);
+        if (cbr < 2.0 || cbr > 20.0) throw new Exception();
         int subBase = sharedPref.getInt(Keys.tipoSubBaseKey, -1);
         int espessura = sharedPref.getInt(Keys.espessuraKey, -1);
         int[] column = new int[19];
@@ -441,10 +433,9 @@ public class NonStaticData {
                 column = getColumnForEspessuraConcretoRolado(espessura);
                 break;
             default:
-                break;
+                throw new Exception();
         }
         double k = getKFromCloumn(cbr, column);
-        //Conversao de k
         return k / 0.27;
     }
 
@@ -472,7 +463,7 @@ public class NonStaticData {
     }
 
     private static Double[] calculateSomatorioTrafegoES(Activity activity, Double projecaoCrescimento) {
-        Long[] trafegoSimples = NonStaticData.getTrafegoEixoSimples(Objects.requireNonNull(activity));
+        Long[] trafegoSimples = Model.getTrafegoEixoSimples(Objects.requireNonNull(activity));
         Double[] somatorioSimples = new Double[10];
         for (int a = 0; a < 10; a++) {
             somatorioSimples[a] = Double.valueOf(trafegoSimples[a]);
@@ -486,7 +477,7 @@ public class NonStaticData {
     }
 
     private static Double[] calculateSomatorioTrafegoETD(Activity activity, Double projecaoCrescimento) {
-        Long[] trafegoDuplo = NonStaticData.getTrafegoEixoTD(Objects.requireNonNull(activity));
+        Long[] trafegoDuplo = Model.getTrafegoEixoTD(Objects.requireNonNull(activity));
         Double[] somatorioDuplo = new Double[11];
         for (int a = 0; a < somatorioDuplo.length; a++) {
             somatorioDuplo[a] = Double.valueOf(trafegoDuplo[a]);
@@ -500,7 +491,7 @@ public class NonStaticData {
     }
 
     private static Double[] calculateSomatorioTrafegoETT(Activity activity, Double projecaoCrescimento) {
-        Long[] trafegoTriplo = NonStaticData.getTrafegoEixoTT(Objects.requireNonNull(activity));
+        Long[] trafegoTriplo = Model.getTrafegoEixoTT(Objects.requireNonNull(activity));
         Double[] somatorioTriplo = new Double[9];
 
         for (int a = 0; a < somatorioTriplo.length; a++) {
@@ -518,7 +509,7 @@ public class NonStaticData {
         return trafego * (1 + (projecao / 100));
     }
 
-    private static int[] getColumnForEspessuraConcretoRolado(int espessura) {
+    private static int[] getColumnForEspessuraConcretoRolado(int espessura) throws Exception {
         switch (espessura) {
             case R.id.espessura_button_1:
                 return StaticData.subBaseRolada10;
@@ -527,11 +518,11 @@ public class NonStaticData {
             case R.id.espessura_button_3:
                 return StaticData.subBaseRolada20;
             default:
-                return null;
+                throw new Exception();
         }
     }
 
-    private static int[] getColumnForEspessuraSoloCimento(int espessura) {
+    private static int[] getColumnForEspessuraSoloCimento(int espessura) throws Exception {
         switch (espessura) {
             case R.id.espessura_button_1:
                 return StaticData.subBaseCimento10;
@@ -540,11 +531,11 @@ public class NonStaticData {
             case R.id.espessura_button_3:
                 return StaticData.subBaseCimento20;
             default:
-                return null;
+                throw new Exception();
         }
     }
 
-    private static int[] getColumnForEspessuraSoloMelhorado(int espessura) {
+    private static int[] getColumnForEspessuraSoloMelhorado(int espessura) throws Exception {
         switch (espessura) {
             case R.id.espessura_button_1:
                 return StaticData.subBaseMelhorada10;
@@ -553,11 +544,11 @@ public class NonStaticData {
             case R.id.espessura_button_3:
                 return StaticData.subBaseMelhorada20;
             default:
-                return null;
+                throw new Exception();
         }
     }
 
-    private static int[] getColumnForEspessuraGranular(int espessura) {
+    private static int[] getColumnForEspessuraGranular(int espessura) throws Exception {
         switch (espessura) {
             case R.id.espessura_button_1:
                 return StaticData.subBaseGranular10;
@@ -568,11 +559,11 @@ public class NonStaticData {
             case R.id.espessura_button_4:
                 return StaticData.subBaseGranular30;
             default:
-                return null;
+                throw new Exception();
         }
     }
 
-    private static double getFSC(Activity activity) {
+    private static double getFSC(Activity activity) throws Exception {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         int carga = sharedPref.getInt(Keys.tipoCargaKey, -1);
         switch (carga) {
@@ -582,10 +573,14 @@ public class NonStaticData {
                 return 1.1;
             case TipoCarga.FSC12:
                 return 1.2;
+            case TipoCarga.FSC13:
+                return 1.3;
+            case TipoCarga.FSC14:
+                return 1.4;
             case TipoCarga.FSC15:
                 return 1.5;
             default:
-                return 0; //TODO jogar exception (lembrar de fazer em todos os lugares onde pega algo do shared prefs)
+                throw new Exception();
         }
     }
 

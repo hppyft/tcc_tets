@@ -1,6 +1,5 @@
 package com.hppyft.tcctets.View;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -17,8 +16,6 @@ import com.hppyft.tcctets.R;
 import com.hppyft.tcctets.Util.SaveTextOnSharedPrefs;
 import com.hppyft.tcctets.databinding.FragEixoSimplesBinding;
 
-import java.util.Objects;
-
 public class EixoSimplesFrag extends Fragment {
 
     private FragEixoSimplesBinding mBinding;
@@ -28,24 +25,10 @@ public class EixoSimplesFrag extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.frag_eixo_simples, container, false);
 
-        cleanWatchers();
         loadData();
         addWatchers();
 
         return mBinding.getRoot();
-    }
-
-    private void cleanWatchers() {
-//        mBinding.carga6.repeticaoEdit.removeTextChangedListener();
-//        mBinding.carga7.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga8.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga9.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga10.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga11.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga12.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga13.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga14.repeticaoEdit.removeTextChangedListener(null);
-//        mBinding.carga15.repeticaoEdit.removeTextChangedListener(null);
     }
 
     private void addWatchers() {

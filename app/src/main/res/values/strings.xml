@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Aqui vai o nome do app</string>
+    <string name="app_name">ConcrePav</string>
+
     <string name="fct_label">Fct do concreto</string>
     <string name="espessura_label">Espessura (cm)</string>
     <string name="projecao_crescimento_label">Projeção de crescimento (%)</string>
@@ -20,6 +21,7 @@
     <string name="eixo_tt_frag_title">Eixo TT</string>
     <string name="carga_por_eixo">Carga por eixo (t)</string>
     <string name="repeticoes">Repetições</string>
+
     <string name="carga_6">&lt; 6</string>
     <string name="carga_7">7</string>
     <string name="carga_8">8</string>
@@ -45,6 +47,7 @@
     <string name="carga_28">28</string>
     <string name="carga_29">29</string>
     <string name="carga_30">30</string>
+
     <string name="resultados_frag_title">Resultados</string>
     <string name="cbr_label">CBR (%)</string>
     <string name="barras_tranferencia_label">Barras de transferência</string>
@@ -53,4 +56,7 @@
     <string name="presenca_acostamento_label">Presença de acostamento de concreto:</string>
     <string name="com_acostamento_label">Com acostamento</string>
     <string name="sem_acostamento_label">Sem acostamento</string>
+    <string name="espessura_result">%1$d cm</string>
+    <string name="voltar">Voltar</string>
+    <string name="desc_result">Consumo total por fadiga: %1$.2f%% \nConsumo total por erosão: %2$.2f%%</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.hppyft.tcctets.View;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -16,8 +15,6 @@ import com.hppyft.tcctets.Data.Keys;
 import com.hppyft.tcctets.R;
 import com.hppyft.tcctets.Util.SaveTextOnSharedPrefs;
 import com.hppyft.tcctets.databinding.FragEixoTtBinding;
-
-import java.util.Objects;
 
 public class EixoTTFrag extends Fragment {
 
